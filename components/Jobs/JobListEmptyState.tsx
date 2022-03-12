@@ -61,25 +61,6 @@ export default function JobListEmptyState({ onClick }: Props) {
         fontSize="14px"
         mt="40px"
       >
-        Illustration by
-        {' '}
-        <Link
-          color="blue.500"
-          href="https://icons8.com/illustrations/author/5dca95ef01d036001426e2bc"
-          textDecor="underline"
-        >
-          Ivan Haidutsk
-          {' '}
-        </Link>
-        from
-        {' '}
-        <Link
-          color="blue.500"
-          href="https://icons8.com/illustrations"
-          textDecor="underline"
-        >
-          Ouch!
-        </Link>
       </Text>
     </Flex>
   );

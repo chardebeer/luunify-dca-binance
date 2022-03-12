@@ -30,7 +30,7 @@ export default function ErrorState({ onClick }: Props) {
           </Text>
         </Box>
         <Button
-          colorScheme="black"
+          colorScheme="orange"
           onClick={onClick}
           type="button"
         >
