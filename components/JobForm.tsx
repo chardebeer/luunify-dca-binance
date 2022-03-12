@@ -18,19 +18,14 @@ import { diff } from 'deep-object-diff';
 import debounce from 'lodash.debounce';
 import React, { useRef, useState } from 'react';
 import { Field, Form } from 'react-final-form';
-import {
-  displayToast,
-  generateSelectOption,
-  getSymbols,
-  getTimezones,
-} from '../client-utils';
+import { displayToast, generateSelectOption, getSymbols, getTimezones } from '../client-utils';
 import { Job } from '../types';
 import Overlay from './Overlay';
 import Popover from './Popover';
 import Select from './Select';
 
 type Props = {
-  defaultTimezone?: string;
+  defaultTimezone: string;
   isOpen: boolean;
   job?: Job | null;
   onFormClose: () => void;
@@ -55,13 +50,7 @@ function getCronDescription(cron: string) {
   }
 }
 
-export default function JobForm({
-  defaultTimezone,
-  isOpen,
-  job,
-  onFormClose,
-  onSubmitSuccess,
-}: Props) {
+export default function JobForm({ defaultTimezone, isOpen, job, onFormClose, onSubmitSuccess }: Props) {
   const isEditMode = !!job;
   const initialValues: Values = isEditMode
     ? {
@@ -70,10 +59,7 @@ export default function JobForm({
         quoteAsset: job.data.quoteAsset,
         schedule: job.repeatInterval,
         symbol: job.data.symbol,
-        timezone:
-          job.data.useDefaultTimezone && defaultTimezone
-            ? defaultTimezone
-            : job.repeatTimezone,
+        timezone: job.data.useDefaultTimezone && defaultTimezone ? defaultTimezone : job.repeatTimezone,
         useDefaultTimezone: job.data.useDefaultTimezone,
       }
     : {
@@ -86,9 +72,7 @@ export default function JobForm({
         useDefaultTimezone: false,
       };
 
-  const subTitle = isEditMode
-    ? 'Edit your job details'
-    : 'Create a new recurring job';
+  const subTitle = isEditMode ? 'Edit your job details' : 'Create a new recurring job';
   const title = isEditMode ? 'Edit Job' : 'Create Job';
   const [isLoading, setIsLoading] = useState(false);
   const [minNotional, setMinNotional] = useState(0);
@@ -226,26 +210,17 @@ export default function JobForm({
             }
           }
           return (
-            <form
-              aria-label={isEditMode ? 'edit job' : 'create job'}
-              id="job"
-              onSubmit={handleSubmit}
-            >
+            <form aria-label={isEditMode ? 'edit job' : 'create job'} id="job" onSubmit={handleSubmit}>
               <Stack spacing={4}>
                 <Field name="jobName">
                   {({ input, meta }) => (
-                    <FormControl
-                      id="jobName"
-                      isInvalid={meta.error && meta.touched}
-                    >
+                    <FormControl id="jobName" isInvalid={meta.error && meta.touched}>
                       <FormLabel mb="1px">
                         <Stack align="center" isInline spacing={1}>
                           <Text fontSize="17px" fontWeight="bold">
                             Name
                           </Text>
-                          <Popover title="Job name">
-                            A discernible name for your recurring job.
-                          </Popover>
+                          <Popover title="Job name">A discernible name for your recurring job.</Popover>
                         </Stack>
                       </FormLabel>
                       <Input
@@ -261,18 +236,14 @@ export default function JobForm({
                 </Field>
                 <Field name="symbol">
                   {({ input, meta }) => (
-                    <FormControl
-                      id="symbol"
-                      isInvalid={meta.error && meta.touched}
-                    >
+                    <FormControl id="symbol" isInvalid={meta.error && meta.touched}>
                       <FormLabel mb="1px">
                         <Stack align="center" isInline spacing={1}>
                           <Text fontSize="17px" fontWeight="bold">
                             Symbol
                           </Text>
                           <Popover title="Symbol">
-                            This is the base asset and quote asset pair you want
-                            to trade e.g BTCUSDT
+                            This is the base asset and quote asset pair you want to trade e.g BTCUSDT
                           </Popover>
                         </Stack>
                       </FormLabel>
@@ -297,8 +268,7 @@ export default function JobForm({
                 </Field>
                 <Field name="amount">
                   {({ input, meta }) => {
-                    const isInvalid =
-                      (meta.touched && meta.error) || meta.submitError;
+                    const isInvalid = (meta.touched && meta.error) || meta.submitError;
                     return (
                       <FormControl id="amount" isInvalid={isInvalid}>
                         <FormLabel mb="1px">
@@ -307,10 +277,8 @@ export default function JobForm({
                               Amount
                             </Text>
                             <Popover title="Amount">
-                              This is the total amount of the quote asset you
-                              are willing to spend—, e.g, a value of 10 for
-                              BNBUSDT would equate to buying 10 USDT worth of
-                              BNB.
+                              This is the total amount of the quote asset you are willing to spend—, e.g, a value of 10
+                              for BNBUSDT would equate to buying 10 USDT worth of BNB.
                             </Popover>
                           </Stack>
                         </FormLabel>
@@ -325,33 +293,23 @@ export default function JobForm({
                           />
                           <InputRightAddon>{values.quoteAsset}</InputRightAddon>
                         </InputGroup>
-                        <FormErrorMessage>
-                          {meta.error || meta.submitError}
-                        </FormErrorMessage>
+                        <FormErrorMessage>{meta.error || meta.submitError}</FormErrorMessage>
                       </FormControl>
                     );
                   }}
                 </Field>
                 <Field name="schedule">
                   {({ input, meta }) => (
-                    <FormControl
-                      id="schedule"
-                      isInvalid={meta.error && meta.touched}
-                    >
+                    <FormControl id="schedule" isInvalid={meta.error && meta.touched}>
                       <FormLabel mb="1px">
                         <Stack align="center" isInline spacing={1}>
                           <Text fontSize="17px" fontWeight="bold">
                             Schedule
                           </Text>
                           <Popover title="Schedule">
-                            Your schedule determines when your job runs. If you
-                            need help generating the cron syntax for your job,{' '}
-                            try a cron-generator like{' '}
-                            <Link
-                              color="blue.500"
-                              href="https://crontab.cronhub.io/"
-                              isExternal
-                            >
+                            Your schedule determines when your job runs. If you need help generating the cron syntax for
+                            your job, try a cron-generator like{' '}
+                            <Link color="blue.500" href="https://crontab.cronhub.io/" isExternal>
                               CronTab
                             </Link>
                           </Popover>
@@ -365,11 +323,7 @@ export default function JobForm({
                         value={input.value}
                         isDisabled={isEditMode}
                       />
-                      {!meta.error && (
-                        <FormHelperText>
-                          {getCronDescription(input.value)}
-                        </FormHelperText>
-                      )}
+                      {!meta.error && <FormHelperText>{getCronDescription(input.value)}</FormHelperText>}
                       <FormErrorMessage>{meta.error}</FormErrorMessage>
                     </FormControl>
                   )}
@@ -377,18 +331,14 @@ export default function JobForm({
                 <Box>
                   <Field name="timezone">
                     {({ input, meta }) => (
-                      <FormControl
-                        id="timezone"
-                        isInvalid={meta.error && meta.touched}
-                      >
+                      <FormControl id="timezone" isInvalid={meta.error && meta.touched}>
                         <FormLabel mb="1px">
                           <Stack align="center" isInline spacing={1}>
                             <Text fontSize="17px" fontWeight="bold">
                               Timezone
                             </Text>
                             <Popover title="Timezone">
-                              Set a specific timezone for your job schedule or{' '}
-                              use your global default.
+                              Set a specific timezone for your job schedule or use your global default.
                             </Popover>
                           </Stack>
                         </FormLabel>
@@ -419,9 +369,7 @@ export default function JobForm({
                               if (target.checked) {
                                 form.mutators.updateTimezone(defaultTimezone);
                               }
-                              form.mutators.updateUseDefaultTimezone(
-                                target.checked
-                              );
+                              form.mutators.updateUseDefaultTimezone(target.checked);
                             }}
                           />
                         </Text>

@@ -35,7 +35,7 @@ const JobList = dynamic(() => import('./JobList'), {
 });
 
 type Props = {
-  defaultTimezone?: string;
+  defaultTimezone: string;
 };
 
 export default function Jobs({ defaultTimezone }: Props) {

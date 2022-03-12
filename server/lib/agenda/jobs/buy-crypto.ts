@@ -1,5 +1,5 @@
 import { Agenda, Job } from 'agenda';
-import mongoose from 'mongoose';
+import { MongooseError } from 'mongoose';
 import binance from '../../binance';
 import notifications from '../../notifications';
 import rootLogger from '../../logger';
@@ -44,7 +44,7 @@ module.exports = (agenda: Agenda) => {
     } catch (err: any) {
       logger.error({ err });
       sentry.captureException(err);
-      if (!(err instanceof mongoose.Error)) {
+      if (!(err instanceof MongooseError)) {
         notifications.sendMessage('error', {
           date: formatDateString(new Date(), { timeZone: repeatTimezone }),
           name: data?.jobName,

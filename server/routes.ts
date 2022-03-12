@@ -26,28 +26,6 @@ router.get('/api/balance', async (_, res, next) => {
   }
 });
 
-router
-  .route('/api/settings/password')
-  .post(async (req, res, next) => {
-    try {
-      const { status, message } = await controller.setPassword(req.body);
-      res.status(status).json({ message });
-    } catch (err) {
-      next(err);
-    }
-  })
-  .patch(async (req, res, next) => {
-    try {
-      const { status, message } = await controller.updatePassword(req.body);
-      if (status < 400) {
-        res.clearCookie('accessToken');
-      }
-      res.status(status).json({ message });
-    } catch (err) {
-      next(err);
-    }
-  });
-
 router.patch('/api/settings/general', async (req, res, next) => {
   try {
     const { status, ...rest } = await controller.updateSettings(req.body);
@@ -55,23 +33,6 @@ router.patch('/api/settings/general', async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-});
-
-router.post('/login', async (req, res) => {
-  const { password } = req.body;
-  const { accessToken, message, status } = await controller.loginUser(password);
-  if (accessToken) {
-    res.cookie('accessToken', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-    });
-  }
-  res.status(status).json({ message });
-});
-
-router.post('/logout', (_req, res) => {
-  res.clearCookie('accessToken');
-  res.status(200).end();
 });
 
 router
@@ -105,9 +66,7 @@ router
   })
   .get(async (req, res, next) => {
     try {
-      const { status, ...payload } = await controller.fetchJob(
-        req.params.jobId
-      );
+      const { status, ...payload } = await controller.fetchJob(req.params.jobId);
       res.status(status).json(payload);
     } catch (err) {
       next(err);
@@ -115,10 +74,7 @@ router
   })
   .patch(async (req, res, next) => {
     try {
-      const { status, ...rest } = await controller.updateJob(
-        req.params.jobId,
-        req.body
-      );
+      const { status, ...rest } = await controller.updateJob(req.params.jobId, req.body);
       res.status(status).json(rest);
     } catch (err) {
       next(err);

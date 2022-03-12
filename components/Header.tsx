@@ -1,35 +1,15 @@
-import {
-  HamburgerIcon,
-  LockIcon,
-  SettingsIcon,
-  UnlockIcon,
-} from '@chakra-ui/icons';
-import {
-  Flex,
-  Icon,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-} from '@chakra-ui/react';
-import React from 'react';
+import { HamburgerIcon, SettingsIcon } from '@chakra-ui/icons';
 import { MdLogout } from 'react-icons/md';
+import { Flex, Icon, IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
+import React from 'react';
 import Logo from './Logo';
+import { signOut } from 'next-auth/react';
 
 type Props = {
-  isPasswordEnabled: boolean;
   onGlobalSettingsClick: () => void;
-  onLogoutSuccess: () => void;
-  onPasswordSettingsClick: () => void;
 };
 
-export default function Header({
-  isPasswordEnabled,
-  onGlobalSettingsClick,
-  onLogoutSuccess,
-  onPasswordSettingsClick,
-}: Props) {
+export default function Header({ onGlobalSettingsClick }: Props) {
   return (
     <Flex
       align="center"
@@ -57,17 +37,9 @@ export default function Header({
           <MenuItem icon={<SettingsIcon />} onClick={onGlobalSettingsClick}>
             General settings
           </MenuItem>
-          <MenuItem
-            icon={isPasswordEnabled ? <LockIcon /> : <UnlockIcon />}
-            onClick={onPasswordSettingsClick}
-          >
-            Password settings
+          <MenuItem icon={<Icon as={MdLogout} />} onClick={() => signOut()}>
+            Logout
           </MenuItem>
-          {isPasswordEnabled && (
-            <MenuItem icon={<Icon as={MdLogout} />} onClick={onLogoutSuccess}>
-              Logout
-            </MenuItem>
-          )}
         </MenuList>
       </Menu>
     </Flex>

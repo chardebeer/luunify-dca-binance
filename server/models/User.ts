@@ -1,26 +1,19 @@
 import { Schema, model, ValidatorProps } from 'mongoose';
 import moment from 'moment-timezone';
 
-const {
-  SLACK_ENABLED,
-  SLACK_WEBHOOK_URL = '',
-  TELEGRAM_BOT_TOKEN = '',
-  TELEGRAM_CHAT_ID = '',
-  TELEGRAM_ENABLED,
-  TIMEZONE = '',
-} = process.env;
+const { TELEGRAM_BOT_TOKEN = '', TELEGRAM_CHAT_ID = '', TELEGRAM_ENABLED } = process.env;
 
 export default model(
   'User',
   new Schema({
-    password: {
-      enabled: { type: Boolean, default: false },
-      hash: { type: String, default: '' },
-    },
-
-    slack: {
-      enabled: { type: Boolean, default: SLACK_ENABLED === 'true' },
-      url: { type: String, default: SLACK_WEBHOOK_URL },
+    email: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      unique: true,
+      isReuries: [true, 'Email address is required'],
+      validate: [validateEmail, 'Please fill a valid email address'],
+      match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address'],
     },
 
     telegram: {
@@ -30,23 +23,10 @@ export default model(
     },
 
     timezone: {
-      default: () => {
-        // Allow setting empty string
-        if (TIMEZONE) {
-          const timezone = moment.tz
-            .names()
-            .find((name) => name.toLowerCase() === TIMEZONE.toLowerCase());
-          if (!timezone) {
-            return TIMEZONE;
-          }
-          return timezone;
-        }
-        return TIMEZONE;
-      },
+      default: Intl.DateTimeFormat().resolvedOptions().timeZone,
       type: String,
       validate: {
-        message: ({ value }: ValidatorProps) =>
-          `${value} is not a valid timezone`,
+        message: ({ value }: ValidatorProps) => `${value} is not a valid timezone`,
         validator: function (tz: string) {
           if (tz) {
             return moment.tz.zone(tz) !== null;
@@ -57,3 +37,8 @@ export default model(
     },
   })
 );
+
+function validateEmail(email: string) {
+  const re = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+  return re.test(email);
+}

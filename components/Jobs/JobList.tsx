@@ -1,14 +1,4 @@
-import {
-  Box,
-  Icon,
-  IconButton,
-  Table,
-  Tbody,
-  Text,
-  Thead,
-  Tr,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Box, Icon, IconButton, Table, Tbody, Text, Thead, Tr, useDisclosure } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { FaPlus } from 'react-icons/fa';
 import { displayToast, useMediaQuery } from '../../client-utils';
@@ -21,20 +11,14 @@ import Job from './Job';
 type Action = 'edit' | 'delete' | 'history' | 'status';
 
 type Props = {
-  defaultTimezone?: string;
+  defaultTimezone: string;
   jobs: JobType[];
   handleDelete: (jobId: string) => void;
   handleUpdate: (job: JobType, op: string) => void;
   openJobForm: (jobId?: string) => void;
 };
 
-export default function JobList({
-  defaultTimezone,
-  jobs,
-  handleDelete,
-  handleUpdate,
-  openJobForm,
-}: Props) {
+export default function JobList({ defaultTimezone, jobs, handleDelete, handleUpdate, openJobForm }: Props) {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const isMobile = useMediaQuery('(max-width: 500px)');
   const [isLoading, setIsLoading] = useState(false);
@@ -69,9 +53,7 @@ export default function JobList({
         setShowOrderHistory(true);
         break;
       default:
-        throw new Error(
-          'Action must be one of edit | delete | history | status'
-        );
+        throw new Error('Action must be one of edit | delete | history | status');
     }
   };
 
@@ -88,11 +70,7 @@ export default function JobList({
       nextRun={job.nextRunAt}
       onButtonClick={handleButtonClick}
       symbol={job.data.symbol}
-      timezone={
-        job.data.useDefaultTimezone && defaultTimezone
-          ? defaultTimezone
-          : job.repeatTimezone
-      }
+      timezone={job.data.useDefaultTimezone && defaultTimezone ? defaultTimezone : job.repeatTimezone}
     />
   ));
 
@@ -168,11 +146,7 @@ export default function JobList({
   return (
     <>
       <Box overflow="auto">
-        <Text
-          fontSize="xl"
-          fontWeight="bold"
-          mb="20px"
-        >{`Jobs(${jobs.length})`}</Text>
+        <Text fontSize="xl" fontWeight="bold" mb="20px">{`Jobs(${jobs.length})`}</Text>
         {isMobile ? (
           <>{jobsArray}</>
         ) : (

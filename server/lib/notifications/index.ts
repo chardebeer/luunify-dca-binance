@@ -1,6 +1,4 @@
-import slack from './slack';
 import telegram from './telegram';
-
 
 export type Event = 'success' | 'error';
 
@@ -16,12 +14,8 @@ export type JobEventPayload = Partial<{
   reason: string;
 }>;
 
-
 export default {
   async sendMessage(event: Event, job: JobEventPayload) {
-    await Promise.all([
-      slack.sendMessage(event, job),
-      telegram.sendMessage(event, job),
-    ]);
+    await Promise.all([telegram.sendMessage(event, job)]);
   },
 };

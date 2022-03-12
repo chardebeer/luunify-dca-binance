@@ -14,28 +14,6 @@ export type JobConfig = {
   useDefaultTimezone: boolean;
 };
 
-export function cleanUserObject({
-  password,
-  slack,
-  telegram,
-  timezone,
-}: {
-  password: { enabled: boolean; hash: string };
-  slack: { enabled: boolean; url: string };
-  telegram: { botToken: string; chatId: string; enabled: boolean };
-  timezone: string;
-}) {
-  return {
-    password: {
-      enabled: password.enabled,
-      isSet: password.hash.length > 0,
-    },
-    slack,
-    telegram,
-    timezone,
-  };
-}
-
 // Joi validation functions
 
 export function validateTimezone(tz: string, helper: Joi.CustomHelpers) {
@@ -69,10 +47,7 @@ export function formatDateString(date: Date, options = {}) {
   });
 }
 
-export async function validateJobConfig(
-  config: Partial<JobConfig>,
-  mode: PresenceMode = 'required'
-) {
+export async function validateJobConfig(config: Partial<JobConfig>, mode: PresenceMode = 'required') {
   const schema = Joi.object({
     amount: Joi.number().presence(mode),
     paused: Joi.bool(),
@@ -86,11 +61,7 @@ export async function validateJobConfig(
             // @ts-ignore
             await binance.exchangeInfo({ symbol: value });
           } catch {
-            throw new ValidationError(
-              '',
-              [{ message: `Failed to validate symbol: ${value}` }],
-              null
-            );
+            throw new ValidationError('', [{ message: `Failed to validate symbol: ${value}` }], null);
           }
         }
       }),

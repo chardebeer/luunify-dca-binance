@@ -35,8 +35,8 @@ export type Order = {
 };
 
 export type User = {
-  password: { enabled: boolean; isSet: boolean };
-  slack: { enabled: boolean; url: string };
-  telegram: { enabled: boolean; chatId: string; botToken: string };
-  timezone: string;
+  email: string;
+  apiKey?: string;
+  apiSecret?: string;
+  timezone?: string;
 };
