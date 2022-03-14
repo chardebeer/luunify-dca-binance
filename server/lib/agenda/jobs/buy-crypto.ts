@@ -26,7 +26,7 @@ module.exports = (agenda: Agenda) => {
           quoteOrderQty: data?.amount,
         });
         logger.info({ data }, `> Job: ${data?.jobName} ran successfully`);
-        Order.create({ jobId: _id, ...order });
+        Order.create({ jobId: _id, ...order, userEmail: data?.userEmail });
         notifications.sendMessage('success', {
           cummulativeQuoteQty: order.cummulativeQuoteQty,
           executedQty: order.executedQty,
@@ -39,6 +39,7 @@ module.exports = (agenda: Agenda) => {
           transactTime: formatDateString(new Date(order.transactTime || ''), {
             timeZone: repeatTimezone,
           }),
+          userEmail: data?.userEmail,
         });
       }
     } catch (err: any) {

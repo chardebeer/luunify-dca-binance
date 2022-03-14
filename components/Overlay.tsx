@@ -33,21 +33,12 @@ type Props = {
 };
 
 const Overlay = React.forwardRef<HTMLButtonElement, Props>(
-  (
-    { children, formId, footer, isLoading, isOpen, onClose, subTitle, title },
-    ref
-  ) => {
+  ({ children, formId, footer, isLoading, isOpen, onClose, subTitle, title }, ref) => {
     const isMobile = useMediaQuery('(max-width: 600px)');
+
     const footerContent = footer || (
       <Stack spacing={2} width="100%">
-        <Button
-          colorScheme="black"
-          form={formId}
-          isFullWidth
-          isLoading={isLoading}
-          ref={ref}
-          type="submit"
-        >
+        <Button colorScheme="black" form={formId} isFullWidth isLoading={isLoading} ref={ref} type="submit">
           Save
         </Button>
         <Button colorScheme="red" isFullWidth onClick={onClose}>

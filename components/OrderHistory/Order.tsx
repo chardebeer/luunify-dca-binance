@@ -42,12 +42,7 @@ function Row({ children, isCustom = false, title, value }: RowProps) {
   );
 }
 
-function Trade({
-  commission,
-  commissionAsset,
-  price,
-  qty,
-}: Omit<Fill, 'tradeId'>) {
+function Trade({ commission, commissionAsset, price, qty }: Omit<Fill, 'tradeId'>) {
   return (
     <Stack borderBottom="1px dashed rgb(234, 236, 239)" pb="10px" spacing={1}>
       <Row title="commission" value={`${commission} ${commissionAsset}`} />
@@ -88,15 +83,10 @@ export default function Order({
               />
             )}
           </Flex>
-          <Row
-            title="Updated At:"
-            value={new Date(transactTime).toLocaleString('en-GB')}
-          />
+          <Row title="Updated At:" value={new Date(transactTime).toLocaleString('en-GB')} />
           <Row title="Order Id:" value={orderId} />
           <Row isCustom title="Status:">
-            <Badge colorScheme={isPartiallyFilled ? 'orange' : 'green'}>
-              {status}
-            </Badge>
+            <Badge colorScheme={isPartiallyFilled ? 'orange' : 'green'}>{status}</Badge>
           </Row>
           <Row title="Original Qty" value={origQty} />
           <Row title="Executed Qty" value={executedQty} />

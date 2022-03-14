@@ -24,12 +24,11 @@ import Select from './Select';
 
 type Props = {
   onClose: () => void;
-  onUpdate: (user: User) => void;
   initialValues: User;
   isOpen: boolean;
 };
 
-export default function Settings({ onClose, onUpdate, initialValues, isOpen }: Props) {
+export default function Settings({ onClose, initialValues, isOpen }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const btnRef = useRef<HTMLButtonElement>(null);
 
@@ -44,16 +43,20 @@ export default function Settings({ onClose, onUpdate, initialValues, isOpen }: P
       const response = await fetch('/api/settings/general', {
         method: 'PATCH',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ ...payload, email: initialValues.email }),
       });
-      const { data, message: description } = await response.json();
+      const { message: description } = await response.json();
+
       if (response.ok) {
         displayToast({
           description: 'Settings updated',
           status: 'success',
           title: 'Success',
         });
-        onUpdate(data);
+
+        const event = new Event('visibilitychange');
+        document.dispatchEvent(event);
+
         onClose();
       } else {
         setIsLoading(false);
@@ -212,7 +215,7 @@ export default function Settings({ onClose, onUpdate, initialValues, isOpen }: P
                   <Field name="telegram.enabled">
                     {({ input }) => (
                       <Text color="gray.500" fontSize="sm" mt="0.5rem">
-                        Enable Telegram Notifications ?{'  '}
+                        Enable Telegram Notifications ?
                         <Switch
                           isChecked={values.telegram.enabled}
                           name={input.name}

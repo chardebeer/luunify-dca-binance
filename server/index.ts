@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import next from 'next';
 import path from 'path';
 import app from './app';
-// import agenda from './lib/agenda';
+import agenda from './lib/agenda';
 import rootLogger from './lib/logger';
 import sentry from './lib/sentry';
 
@@ -17,12 +17,14 @@ const logger = rootLogger.child({ module: 'app' });
 (async function start() {
   try {
     await nextApp.prepare();
+
     app.all('*', (req, res) => {
       if (req.url.startsWith('/api/auth/')) {
         req.query.nextauth = req.url.slice('/api/auth/'.length).replace(/\?.*/, '').split('/');
       }
       handler(req, res);
     });
+
     app.use(sentry.Handlers.errorHandler());
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -33,9 +35,10 @@ const logger = rootLogger.child({ module: 'app' });
     });
 
     await mongoose.connect(MONGODB_URI);
+
     // @ts-ignore
-    // agenda.mongo(mongoose.connection.getClient().db(), 'jobs');
-    // await agenda.start();
+    agenda.mongo(mongoose.connection.getClient().db(), 'jobs');
+    await agenda.start();
 
     app.listen(port, () => {
       logger.info(`> Ready on localhost:${port} - env ${process.env.NODE_ENV}`);

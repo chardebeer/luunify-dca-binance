@@ -1,5 +1,5 @@
 import { Box } from '@chakra-ui/react';
-import { getSession, signIn, useSession } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import React, { useState } from 'react';
 import ErrorBoundary from '../components/ErrorBoundary';
 import Footer from '../components/Footer';
@@ -7,14 +7,14 @@ import Header from '../components/Header';
 import Jobs from '../components/Jobs';
 import Portfolio from '../components/Portfolio';
 import Settings from '../components/Settings';
-import { User } from '../types';
 
 export default function Index() {
+  const { data: session, status } = useSession();
   const [isGeneralSettingsOpen, setIsGeneralSettingsOpen] = useState(false);
-  const [userConfig, updateUserConfig] = useState();
-  const { data: session } = useSession();
-  console.log(session);
-  if (!session) {
+
+  if (status === 'loading') return <p>Loading...</p>;
+
+  if (!session?.user) {
     return (
       <>
         Not signed in <br />
@@ -29,7 +29,7 @@ export default function Index() {
   return (
     <ErrorBoundary>
       <Header onGlobalSettingsClick={() => setIsGeneralSettingsOpen(true)} />
-      {/* <Box
+      <Box
         as="main"
         d="grid"
         gridRowGap="20px"
@@ -39,17 +39,16 @@ export default function Index() {
         py={[2, 5]}
       >
         <Portfolio />
-        <Jobs defaultTimezone={userConfig.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone} />
+        <Jobs defaultTimezone={session.user.timezone || ''} />
       </Box>
       <Footer />
       {isGeneralSettingsOpen && (
         <Settings
-          initialValues={userConfig}
+          initialValues={session.user}
           isOpen={isGeneralSettingsOpen}
           onClose={() => setIsGeneralSettingsOpen(false)}
-          onUpdate={updateUserConfig}
         />
-      )} */}
+      )}
     </ErrorBoundary>
   );
 }

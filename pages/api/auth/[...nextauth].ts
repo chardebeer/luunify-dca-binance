@@ -1,18 +1,23 @@
 import nodemailer from 'nodemailer';
 import NextAuth from 'next-auth';
-import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
 import EmailProvider from 'next-auth/providers/email';
-import clientPromise from '../../../server/lib/mongodb';
-
+import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
+import client from 'server/lib/mongoClient';
+import mongoose from 'mongoose';
+import { User } from 'types';
+// @ts-ignore
+// agenda.mongo(mongoose.connection.getClient().db(), 'jobs');
+// await agenda.start();
 export default NextAuth({
   session: {
     strategy: 'jwt',
+    maxAge: 2592000,
   },
   pages: {
     signIn: '/signin',
     signOut: '/signout',
   },
-  adapter: MongoDBAdapter(clientPromise),
+  adapter: MongoDBAdapter(client),
   providers: [
     EmailProvider({
       server: {
@@ -42,6 +47,16 @@ export default NextAuth({
       },
     }),
   ],
+  callbacks: {
+    async session({ session, token }) {
+      const user: User | null = await mongoose.model('User').findOne({ email: token.email }).lean();
+
+      session.user = user?.timezone ? user : await updateUser(token.email || '');
+
+      return session;
+    },
+  },
+  debug: true,
 });
 
 function html({ url, host, email }: any) {
@@ -61,4 +76,22 @@ function html({ url, host, email }: any) {
 // Fallback for non-HTML email clients
 function text({ url, host }: any) {
   return `Login to ${host}\n${url}\n\n`;
+}
+
+async function updateUser(email: string) {
+  const { TELEGRAM_BOT_TOKEN = '', TELEGRAM_CHAT_ID = '', TELEGRAM_ENABLED } = process.env;
+
+  const updateDoc = {
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone.toString(),
+    telegram: {
+      botToken: TELEGRAM_BOT_TOKEN,
+      chatId: TELEGRAM_CHAT_ID,
+      enabled: TELEGRAM_ENABLED === 'true',
+    },
+  };
+
+  return await mongoose
+    .model('User')
+    .findOneAndUpdate({ email }, { $set: updateDoc }, { new: true, upsert: true, runValidators: true })
+    .lean();
 }

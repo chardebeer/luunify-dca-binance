@@ -12,6 +12,7 @@ export type JobEventPayload = Partial<{
   transactTime: string;
   date: string;
   reason: string;
+  userEmail: string;
 }>;
 
 export default {

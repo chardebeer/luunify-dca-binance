@@ -22,12 +22,7 @@ type Props = {
   onClose: () => void;
 };
 
-export default function OrderHistory({
-  isOpen,
-  jobId,
-  jobName,
-  onClose,
-}: Props) {
+export default function OrderHistory({ isOpen, jobId, jobName, onClose }: Props) {
   const [isLoading, setIsLoading] = useState(true);
   const [orders, setOrders] = useState<OrderType[]>([]);
   const [showErrorState, setShowErrorState] = useState(false);
@@ -56,8 +51,8 @@ export default function OrderHistory({
       const response = await fetch(`/api/orders/${orderId}`, {
         body: JSON.stringify({ orderId, symbol }),
         headers: { 'content-type': 'application/json' },
-        method: 'PATCH'
-      })
+        method: 'PATCH',
+      });
       if (response.ok) {
         const { data } = await response.json();
         const updatedOrders = orders.map((order) => {
@@ -67,27 +62,29 @@ export default function OrderHistory({
           return order;
         });
         setOrders(updatedOrders);
-      } else { throw new Error(response.statusText); }
+      } else {
+        throw new Error(response.statusText);
+      }
     } catch {
       setShowErrorState(true);
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const Component = () => {
     if (isLoading) {
       return <OrderHistoryLoadingState />;
     } else if (showErrorState) {
       return <OrderHistoryErrorState onRetry={fetchOrders} />;
-    } else  if (orders.length < 1) {
-      return <OrderHistoryEmptyState />
+    } else if (orders.length < 1) {
+      return <OrderHistoryEmptyState />;
     }
     return (
       <>
         {orders.map((order) => (
-          <Order 
-            key={order.orderId} 
+          <Order
+            key={order.orderId}
             cummulativeQuoteQty={order.cummulativeQuoteQty}
             executedQty={order.executedQty}
             fills={order.fills}
@@ -97,7 +94,7 @@ export default function OrderHistory({
             status={order.status}
             symbol={order.symbol}
             transactTime={order.transactTime}
-           />
+          />
         ))}
       </>
     );
@@ -108,13 +105,7 @@ export default function OrderHistory({
   }, []);
 
   return (
-    <Drawer
-      isOpen={isOpen}
-      isFullHeight
-      onClose={onClose}
-      placement="left"
-      size="sm"
-    >
+    <Drawer isOpen={isOpen} isFullHeight onClose={onClose} placement="left" size="sm">
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />

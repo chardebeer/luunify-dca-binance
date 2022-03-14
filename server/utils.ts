@@ -12,6 +12,7 @@ export type JobConfig = {
   symbol: string;
   timezone: string;
   useDefaultTimezone: boolean;
+  userEmail: string;
 };
 
 // Joi validation functions
@@ -75,6 +76,7 @@ export async function validateJobConfig(config: Partial<JobConfig>, mode: Presen
         return helpers.message({ custom: `${value} is an invalid asset.` });
       }),
     useDefaultTimezone: Joi.bool().presence(mode),
+    userEmail: Joi.string().presence(mode),
   })
     .oxor('enable', 'disable')
     .messages({

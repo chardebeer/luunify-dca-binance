@@ -1,3 +1,5 @@
+import { DefaultSession } from 'next-auth/core/types';
+
 export type Fill = {
   commission: string;
   commissionAsset: string;
@@ -35,8 +37,10 @@ export type Order = {
 };
 
 export type User = {
+  id: string;
   email: string;
   apiKey?: string;
   apiSecret?: string;
-  timezone?: string;
-};
+  telegram: { enabled: boolean; chatId: string; botToken: string };
+  timezone: string;
+} & DefaultSession['user'];

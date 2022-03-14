@@ -122,10 +122,12 @@ export default function JobForm({ defaultTimezone, isOpen, job, onFormClose, onS
   const onSubmit = async (values: Values) => {
     try {
       setIsLoading(true);
+
       if (isEditMode) {
         const response = await fetch(`/api/symbols?q=${values.symbol}`);
         const { data } = await response.json();
         const [symbol] = data;
+
         if (symbol.minNotional > +values.amount) {
           setIsLoading(false);
           return {
@@ -144,6 +146,7 @@ export default function JobForm({ defaultTimezone, isOpen, job, onFormClose, onS
         body: JSON.stringify(payload),
       });
       const { data: newJob, message: description } = await response.json();
+
       if (response.ok) {
         onSubmitSuccess(newJob, op);
         displayToast({

@@ -21,12 +21,6 @@ export default function SignIn({ csrfToken }: Props) {
   );
 }
 
-// export async function getStaticProps(context: CtxOrReq | undefined) {
-//   return {
-//     props: { csrfToken: await getCsrfToken(context) }, // will be passed to the page component as props
-//   };
-// }
-
 export async function getServerSideProps(context: CtxOrReq | undefined) {
   const csrfToken = await getCsrfToken(context);
   return {

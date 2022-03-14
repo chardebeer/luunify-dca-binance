@@ -14,6 +14,7 @@ interface Balance extends AssetBalance {
 }
 
 type Settings = {
+  email: string;
   telegram: { botToken: string; chatId: string; enabled: boolean };
   timezone: string;
 };
@@ -21,13 +22,16 @@ type Settings = {
 export default {
   fetchTimezones(query = '') {
     const tzs: Array<{ label: string; value: string }> = [];
+
     moment.tz.names().forEach((timezone) => {
       if (timezone.toLowerCase().includes(query.toLowerCase())) {
         tzs.push({ label: timezone, value: timezone });
       }
     });
+
     return tzs;
   },
+
   async fetchSymbols(query = '') {
     const { symbols } = await binance.exchangeInfo();
     const options: Array<{
@@ -35,6 +39,7 @@ export default {
       symbol: string;
       quoteAsset: string;
     }> = [];
+
     symbols.forEach(({ filters, isSpotTradingAllowed, quoteAsset, symbol }) => {
       if (isSpotTradingAllowed && symbol.includes(query.toUpperCase())) {
         const filter = filters.find(({ filterType }) => filterType === 'MIN_NOTIONAL');
@@ -48,12 +53,14 @@ export default {
         }
       }
     });
+
     return options;
   },
 
   async fetchAccountBalance() {
     const { balances } = await binance.accountInfo();
     const nonZeroBalances: Balance[] = [];
+
     balances.forEach((balance) => {
       if (+balance.free > 0 || +balance.locked > 0) {
         nonZeroBalances.push({
@@ -62,11 +69,14 @@ export default {
         });
       }
     });
+
     return nonZeroBalances;
   },
+
   async updateSettings(payload: Partial<Settings>) {
     try {
       await Joi.object({
+        email: Joi.string(),
         telegram: Joi.object({
           enabled: Joi.bool(),
           botToken: Joi.string(),
@@ -74,18 +84,24 @@ export default {
         }),
         timezone: Joi.string().custom(validateTimezone),
       }).validateAsync(payload);
+
       const updateDoc = flattenObject(payload);
       const session = await mongoose.startSession();
       session.startTransaction();
-      const userObject = await User.findOneAndUpdate({}, { $set: updateDoc }, { new: true });
+      const userObject = await User.findOneAndUpdate({ email: payload.email }, { $set: updateDoc }, { new: true });
+
       if ('timezone' in payload) {
         await mongoose.connection
           .getClient()
           .db()
           .collection('jobs')
-          .updateMany({ 'data.useDefaultTimezone': true }, { $set: { repeatTimezone: payload.timezone } });
+          .updateMany(
+            { 'data.useDefaultTimezone': true, 'data.userEmail': userObject.email },
+            { $set: { repeatTimezone: payload.timezone } }
+          );
       }
       await session.commitTransaction();
+
       return { status: 200, data: userObject };
     } catch (e: any) {
       const response = handleJoiValidationError(e);
@@ -93,12 +109,12 @@ export default {
     }
   },
 
-  async fetchAllJobs() {
-    const jobs = await mongoose.connection
+  async fetchAllJobs(userEmail: string) {
+    return await mongoose.connection
       .getClient()
       .db()
       .collection('jobs')
-      .find()
+      .find({ 'data.userEmail': userEmail })
       .project({
         data: 1,
         disabled: 1,
@@ -108,25 +124,27 @@ export default {
         repeatTimezone: 1,
       })
       .toArray();
-    return jobs;
   },
 
   async fetchJob(jobId: string) {
     if (!mongoose.isValidObjectId(jobId)) {
       return { status: 400, message: `job id ${jobId} is invalid` };
     }
+
     const _id = jobId || new mongoose.Types.ObjectId();
     const [job = {}] = await agenda.jobs({ _id }, {}, 1);
+
     return { status: 200, data: job };
   },
 
   async createJob(config: JobConfig) {
     try {
-      const { amount, jobName, schedule, quoteAsset, symbol, timezone, useDefaultTimezone } = await validateJobConfig(
-        config
-      );
+      const { amount, jobName, schedule, quoteAsset, symbol, timezone, useDefaultTimezone, userEmail } =
+        await validateJobConfig(config);
+
       if (useDefaultTimezone) {
-        const user = await User.findOne().lean();
+        const user = await User.findOne({ email: userEmail });
+
         if (!user.timezone) {
           return {
             status: 400,
@@ -134,6 +152,7 @@ export default {
           };
         }
       }
+
       const job = agenda.create('buy-crypto', {
         amount,
         humanInterval: cronstrue.toString(schedule, { verbose: true }),
@@ -141,11 +160,14 @@ export default {
         quoteAsset,
         symbol,
         useDefaultTimezone,
+        userEmail,
       });
+
       job.repeatEvery(schedule, {
         skipImmediate: true,
         timezone,
       });
+
       await job.save();
       return { status: 201, data: job };
     } catch (e: any) {
@@ -177,7 +199,8 @@ export default {
       }
 
       if (data.useDefaultTimezone) {
-        const user = await User.findOne();
+        const user = await User.findOne({ email: data.userEmail });
+
         if (!user.timezone) {
           return {
             status: 400,
@@ -188,6 +211,7 @@ export default {
 
       const _id = new mongoose.Types.ObjectId(jobId);
       const [job] = await agenda.jobs({ _id });
+
       if (!job) {
         return { status: 400, message: `Failed to find job with id: ${jobId}` };
       }
@@ -198,8 +222,10 @@ export default {
           message: 'Job is currently running. Try again in a few seconds',
         };
       }
+
       job.attrs.data = { ...job.attrs.data, ...data };
       job.attrs.repeatTimezone = timezone || job.attrs.repeatTimezone;
+
       await job.save();
       return { status: 200, data: job };
     } catch (e: any) {
@@ -212,17 +238,21 @@ export default {
     if (!mongoose.isValidObjectId(jobId)) {
       return { status: 400, message: `job id ${jobId} is invalid` };
     }
+
     const _id = new mongoose.Types.ObjectId(jobId);
     const [job] = await agenda.jobs({ _id });
+
     if (!job) {
       return { status: 400, message: `Failed to find job with id: ${jobId}` };
     }
+
     if (job.isRunning()) {
       return {
         status: 400,
         message: 'Job is currently running. Try again in a few seconds',
       };
     }
+
     await agenda.cancel({ _id });
     return { status: 200, message: 'Job successfully deleted' };
   },
@@ -231,6 +261,7 @@ export default {
     const orders = await Order.find({ jobId }, null, {
       sort: { transactTime: -1 },
     });
+
     return { data: orders };
   },
 
@@ -242,16 +273,20 @@ export default {
       }).validateAsync(payload);
 
       const order = await Order.findOne({ orderId, symbol });
+
       if (!order) {
         return {
           status: 400,
           message: `Failed to find order with orderId :${orderId} and symbol: ${symbol}`,
         };
       }
+
       if (order.status === 'FILLED') {
         return { status: 200, data: order };
       }
+
       const orderToUpdate = await binance.getOrder({ orderId, symbol });
+
       if (orderToUpdate.status === 'FILLED') {
         // @ts-ignore
         const trades = await binance.myTrades({ orderId, symbol });
@@ -268,8 +303,10 @@ export default {
           { fills, status: orderToUpdate.status, transactTime },
           { new: true }
         );
+
         return { status: 200, data: updatedOrder };
       }
+
       return { status: 200, data: order };
     } catch (e: any) {
       const response = handleJoiValidationError(e);
