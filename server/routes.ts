@@ -1,6 +1,9 @@
 import { Router } from 'express';
+import { Request } from 'express-serve-static-core';
 import { getToken } from 'next-auth/jwt';
+import { ParsedQs } from 'qs';
 import controller from './controller';
+import { encrypt } from './utils';
 
 const router = Router();
 
@@ -16,9 +19,10 @@ router.get('/api/symbols', async (req, res, next) => {
   }
 });
 
-router.get('/api/balance', async (_, res, next) => {
+router.get('/api/balance', async (req, res, next) => {
   try {
-    res.json({ data: await controller.fetchAccountBalance() });
+    const { apiKey, apiSecret } = await getApiKeysFromToken(req);
+    res.json({ data: await controller.fetchAccountBalance(apiKey, apiSecret) });
   } catch (err) {
     next(err);
   }
@@ -26,6 +30,13 @@ router.get('/api/balance', async (_, res, next) => {
 
 router.patch('/api/settings/general', async (req, res, next) => {
   try {
+    if (req.headers.authorization?.startsWith('Basic ')) {
+      const apiKeys = getApiKeysFromHeader(req.headers.authorization);
+
+      req.body.binance.apiKey = apiKeys[0];
+      req.body.binance.apiSecret = apiKeys[1];
+    }
+
     const { status, ...payload } = await controller.updateSettings(req.body);
     res.status(status).json(payload);
   } catch (err) {
@@ -45,8 +56,13 @@ router
   })
   .post(async (req, res, next) => {
     try {
-      const token = await getToken({ req });
-      const { status, ...payload } = await controller.createJob({ ...req.body, userEmail: token?.email });
+      const { email, apiKey, apiSecret } = await getApiKeysFromToken(req);
+      const { status, ...payload } = await controller.createJob({
+        ...req.body,
+        userEmail: email,
+        apiKey: encrypt(apiKey),
+        apiSecret: encrypt(apiSecret),
+      });
 
       res.status(status).json({ ...payload });
     } catch (err) {
@@ -91,11 +107,16 @@ router.get('/api/jobs/:jobId/orders', async (req, res, next) => {
 
 router.patch('/api/orders/:orderId', async (req, res, next) => {
   try {
+    const { apiKey, apiSecret } = await getApiKeysFromToken(req);
     const { orderId, symbol } = req.body;
-    const { status, ...payload } = await controller.updateOrderStatus({
-      orderId,
-      symbol,
-    });
+    const { status, ...payload } = await controller.updateOrderStatus(
+      {
+        orderId,
+        symbol,
+      },
+      apiKey,
+      apiSecret
+    );
 
     res.status(status).json(payload);
   } catch (err) {
@@ -104,3 +125,19 @@ router.patch('/api/orders/:orderId', async (req, res, next) => {
 });
 
 export default router;
+
+async function getApiKeysFromToken(req: Request<Record<string, string>, any, any, ParsedQs, Record<string, any>>) {
+  const { email, apiKey, apiSecret } = (await getToken({ req })) as {
+    email?: string;
+    apiKey?: string;
+    apiSecret?: string;
+  };
+
+  if (!apiKey || !apiSecret) throw new Error('Binance api keys not provided');
+  return { email, apiKey, apiSecret };
+}
+
+function getApiKeysFromHeader(header: string) {
+  const keys = Buffer.from(header.split(' ')[1], 'base64').toString('utf8').split(':');
+  return [encrypt(keys[0]), encrypt(keys[1])];
+}

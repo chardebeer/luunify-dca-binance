@@ -39,8 +39,7 @@ export type Order = {
 export type User = {
   id: string;
   email: string;
-  apiKey?: string;
-  apiSecret?: string;
+  binance: { update: boolean; apiKey?: string; apiSecret?: string };
   telegram: { enabled: boolean; chatId: string; botToken: string };
   timezone: string;
 } & DefaultSession['user'];

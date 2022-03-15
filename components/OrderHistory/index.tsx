@@ -50,7 +50,7 @@ export default function OrderHistory({ isOpen, jobId, jobName, onClose }: Props)
       setIsLoading(true);
       const response = await fetch(`/api/orders/${orderId}`, {
         body: JSON.stringify({ orderId, symbol }),
-        headers: { 'content-type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         method: 'PATCH',
       });
       if (response.ok) {

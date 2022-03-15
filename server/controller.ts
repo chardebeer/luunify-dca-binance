@@ -15,6 +15,7 @@ interface Balance extends AssetBalance {
 
 type Settings = {
   email: string;
+  binance: { apiKey?: string; apiSecret?: string; update: boolean };
   telegram: { botToken: string; chatId: string; enabled: boolean };
   timezone: string;
 };
@@ -33,7 +34,7 @@ export default {
   },
 
   async fetchSymbols(query = '') {
-    const { symbols } = await binance.exchangeInfo();
+    const { symbols } = await binance().exchangeInfo();
     const options: Array<{
       minNotional: number;
       symbol: string;
@@ -57,8 +58,8 @@ export default {
     return options;
   },
 
-  async fetchAccountBalance() {
-    const { balances } = await binance.accountInfo();
+  async fetchAccountBalance(apiKey: string, apiSecret: string) {
+    const { balances } = await binance(apiKey, apiSecret).accountInfo();
     const nonZeroBalances: Balance[] = [];
 
     balances.forEach((balance) => {
@@ -77,15 +78,20 @@ export default {
     try {
       await Joi.object({
         email: Joi.string(),
+        binance: Joi.object({
+          update: Joi.bool(),
+          apiKey: Joi.string().optional(),
+          apiSecret: Joi.string().optional(),
+        }),
         telegram: Joi.object({
           enabled: Joi.bool(),
           botToken: Joi.string(),
-          chatId: Joi.string(),
+          userId: Joi.string(),
         }),
         timezone: Joi.string().custom(validateTimezone),
       }).validateAsync(payload);
 
-      const updateDoc = flattenObject(payload);
+      const updateDoc = flattenObject({ ...payload, binance: { ...payload.binance, update: false } });
       const session = await mongoose.startSession();
       session.startTransaction();
       const userObject = await User.findOneAndUpdate({ email: payload.email }, { $set: updateDoc }, { new: true });
@@ -139,8 +145,18 @@ export default {
 
   async createJob(config: JobConfig) {
     try {
-      const { amount, jobName, schedule, quoteAsset, symbol, timezone, useDefaultTimezone, userEmail } =
-        await validateJobConfig(config);
+      const {
+        amount,
+        jobName,
+        schedule,
+        quoteAsset,
+        symbol,
+        timezone,
+        useDefaultTimezone,
+        userEmail,
+        apiKey,
+        apiSecret,
+      } = await validateJobConfig(config);
 
       if (useDefaultTimezone) {
         const user = await User.findOne({ email: userEmail });
@@ -161,6 +177,8 @@ export default {
         symbol,
         useDefaultTimezone,
         userEmail,
+        apiKey,
+        apiSecret,
       });
 
       job.repeatEvery(schedule, {
@@ -223,6 +241,8 @@ export default {
         };
       }
 
+      delete data.apiKey;
+      delete data.apiSecret;
       job.attrs.data = { ...job.attrs.data, ...data };
       job.attrs.repeatTimezone = timezone || job.attrs.repeatTimezone;
 
@@ -265,7 +285,7 @@ export default {
     return { data: orders };
   },
 
-  async updateOrderStatus(payload: { orderId: number; symbol: string }) {
+  async updateOrderStatus(payload: { orderId: number; symbol: string }, apiKey: string, apiSecret: string) {
     try {
       const { orderId, symbol } = await Joi.object({
         orderId: Joi.number().required(),
@@ -285,11 +305,11 @@ export default {
         return { status: 200, data: order };
       }
 
-      const orderToUpdate = await binance.getOrder({ orderId, symbol });
+      const orderToUpdate = await binance(apiKey, apiSecret).getOrder({ orderId, symbol });
 
       if (orderToUpdate.status === 'FILLED') {
         // @ts-ignore
-        const trades = await binance.myTrades({ orderId, symbol });
+        const trades = await binance(apiKey, apiSecret).myTrades({ orderId, symbol });
         const fills = trades.map((trade) => ({
           commission: trade.commission,
           commissionAsset: trade.commissionAsset,

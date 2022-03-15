@@ -5,9 +5,8 @@ import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
 import client from 'server/lib/mongoClient';
 import mongoose from 'mongoose';
 import { User } from 'types';
-// @ts-ignore
-// agenda.mongo(mongoose.connection.getClient().db(), 'jobs');
-// await agenda.start();
+import { decrypt } from 'server/utils';
+
 export default NextAuth({
   session: {
     strategy: 'jwt',
@@ -48,11 +47,29 @@ export default NextAuth({
     }),
   ],
   callbacks: {
+    async jwt({ token, isNewUser }) {
+      if (isNewUser && token.email) {
+        token.user = updateUser(token.email);
+      } else if (token.email) {
+        const user: User | null = await mongoose.model('User').findOne({ email: token.email }).lean();
+
+        if (user?.binance.apiKey) {
+          token.apiKey = decrypt(user.binance.apiKey || '');
+          token.apiSecret = decrypt(user.binance.apiSecret || '');
+          user.binance.apiKey = '****';
+          user.binance.apiSecret = '****';
+        } else if (user) {
+          user.binance.apiKey = undefined;
+          user.binance.apiSecret = undefined;
+        }
+
+        token.user = user;
+      }
+
+      return token;
+    },
     async session({ session, token }) {
-      const user: User | null = await mongoose.model('User').findOne({ email: token.email }).lean();
-
-      session.user = user?.timezone ? user : await updateUser(token.email || '');
-
+      session.user = token.user;
       return session;
     },
   },
@@ -82,11 +99,14 @@ async function updateUser(email: string) {
   const { TELEGRAM_BOT_TOKEN = '', TELEGRAM_CHAT_ID = '', TELEGRAM_ENABLED } = process.env;
 
   const updateDoc = {
-    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone.toString(),
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     telegram: {
       botToken: TELEGRAM_BOT_TOKEN,
       chatId: TELEGRAM_CHAT_ID,
       enabled: TELEGRAM_ENABLED === 'true',
+    },
+    binance: {
+      update: false,
     },
   };
 

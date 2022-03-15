@@ -115,7 +115,7 @@ export default function JobList({ defaultTimezone, jobs, handleDelete, handleUpd
       }
       const response = await fetch(`/api/jobs/${jobId}`, {
         method: 'PATCH',
-        headers: { 'content-type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
       const { data: updatedJob, message: description } = await response.json();

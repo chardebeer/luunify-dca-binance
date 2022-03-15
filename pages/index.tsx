@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import { signIn, useSession } from 'next-auth/react';
 import React, { useState } from 'react';
 import ErrorBoundary from '../components/ErrorBoundary';
@@ -26,9 +26,8 @@ export default function Index() {
     );
   }
 
-  return (
-    <ErrorBoundary>
-      <Header onGlobalSettingsClick={() => setIsGeneralSettingsOpen(true)} />
+  function renderContent() {
+    return (
       <Box
         as="main"
         d="grid"
@@ -39,8 +38,21 @@ export default function Index() {
         py={[2, 5]}
       >
         <Portfolio />
-        <Jobs defaultTimezone={session.user.timezone || ''} />
+        <Jobs defaultTimezone={session?.user.timezone || ''} />
       </Box>
+    );
+  }
+
+  return (
+    <ErrorBoundary>
+      <Header onGlobalSettingsClick={() => setIsGeneralSettingsOpen(true)} />
+      {session?.user.binance.apiKey && session?.user.binance.apiSecret ? (
+        renderContent()
+      ) : (
+        <Box>
+          <Text fontSize="xl">Please add binance api keys in settings to continue</Text>
+        </Box>
+      )}
       <Footer />
       {isGeneralSettingsOpen && (
         <Settings

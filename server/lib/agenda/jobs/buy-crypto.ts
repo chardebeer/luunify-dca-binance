@@ -5,7 +5,7 @@ import notifications from '../../notifications';
 import rootLogger from '../../logger';
 import sentry from '../../sentry';
 import { Order } from '../../../models';
-import { formatDateString } from '../../../utils';
+import { decrypt, formatDateString } from '../../../utils';
 
 const logger = rootLogger.child({ module: 'agenda' });
 
@@ -15,9 +15,10 @@ module.exports = (agenda: Agenda) => {
     try {
       if (data?.paused) {
         logger.info({ data }, `> Skipping paused job: ${data?.jobName}`);
-      } else {
+      } else if (data?.apiKey && data?.apiSecret) {
         logger.info({ data }, `> Running Job: ${data?.jobName}`);
-        const order = await binance.order({
+
+        const order = await binance(decrypt(data.apiKey), decrypt(data.apiSecret)).order({
           symbol: data?.symbol,
           side: 'BUY',
           // @ts-ignore
@@ -25,8 +26,11 @@ module.exports = (agenda: Agenda) => {
           newOrderRespType: 'FULL',
           quoteOrderQty: data?.amount,
         });
+
         logger.info({ data }, `> Job: ${data?.jobName} ran successfully`);
+
         Order.create({ jobId: _id, ...order, userEmail: data?.userEmail });
+
         notifications.sendMessage('success', {
           cummulativeQuoteQty: order.cummulativeQuoteQty,
           executedQty: order.executedQty,
@@ -45,6 +49,7 @@ module.exports = (agenda: Agenda) => {
     } catch (err: any) {
       logger.error({ err });
       sentry.captureException(err);
+
       if (!(err instanceof MongooseError)) {
         notifications.sendMessage('error', {
           date: formatDateString(new Date(), { timeZone: repeatTimezone }),

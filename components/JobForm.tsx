@@ -142,7 +142,7 @@ export default function JobForm({ defaultTimezone, isOpen, job, onFormClose, onS
       const payload = isEditMode ? diff(initialValues, values) : values;
       const response = await fetch(url, {
         method,
-        headers: { 'content-type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
       const { data: newJob, message: description } = await response.json();

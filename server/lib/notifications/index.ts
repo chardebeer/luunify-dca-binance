@@ -13,6 +13,8 @@ export type JobEventPayload = Partial<{
   date: string;
   reason: string;
   userEmail: string;
+  apiKey: string;
+  apiSecret: string;
 }>;
 
 export default {

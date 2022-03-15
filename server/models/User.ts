@@ -16,6 +16,17 @@ export default model(
       match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address'],
     },
 
+    name: {
+      type: String,
+      trim: true,
+    },
+
+    binance: {
+      apiKey: { type: String, trim: true },
+      apiSecret: { type: String, trim: true },
+      update: { type: Boolean, default: false },
+    },
+
     telegram: {
       botToken: { type: String, defualt: TELEGRAM_BOT_TOKEN },
       chatId: { type: String, default: TELEGRAM_CHAT_ID },

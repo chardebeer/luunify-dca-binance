@@ -13,9 +13,11 @@ import {
 } from '@chakra-ui/react';
 import { diff } from 'deep-object-diff';
 import debounce from 'lodash.debounce';
+import { encode } from 'base-64';
 import React, { useRef, useState } from 'react';
 import { Field, Form } from 'react-final-form';
 import { FaTelegramPlane } from 'react-icons/fa';
+import { SiBinance } from 'react-icons/si';
 import { displayToast, generateSelectOption, getTimezones } from '../client-utils';
 import { User } from '../types';
 import Overlay from './Overlay';
@@ -39,10 +41,17 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
   const onSubmit = async (values: User) => {
     try {
       setIsLoading(true);
+      const { apiKey, apiSecret } = values.binance;
+      delete values.binance.apiKey;
+      delete values.binance.apiSecret;
+
       const payload = diff(initialValues, values);
+      const headers = new Headers({ 'Content-Type': 'application/json' });
+      values.binance.update && headers.append('Authorization', 'Basic ' + encode(`${apiKey}:${apiSecret}`));
+
       const response = await fetch('/api/settings/general', {
         method: 'PATCH',
-        headers: { 'content-type': 'application/json' },
+        headers,
         body: JSON.stringify({ ...payload, email: initialValues.email }),
       });
       const { message: description } = await response.json();
@@ -91,11 +100,14 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
       <Form
         initialValues={initialValues}
         mutators={{
-          enableTelegram([value], state, { changeValue }) {
-            changeValue(state, 'telegram.enabled', () => value);
-          },
           updateTimezone([value], state, { changeValue }) {
             changeValue(state, 'timezone', () => value);
+          },
+          enableBinance([value], state, { changeValue }) {
+            changeValue(state, 'binance.update', () => value);
+          },
+          enableTelegram([value], state, { changeValue }) {
+            changeValue(state, 'telegram.enabled', () => value);
           },
         }}
         onSubmit={onSubmit}
@@ -120,11 +132,13 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
                             <Text fontSize="17px" fontWeight="bold">
                               Timezone
                             </Text>
+
                             <Popover title="Default timezone">
                               Unless otherwise specified, this is the timezone used when scheduling your jobs.
                             </Popover>
                           </Stack>
                         </FormLabel>
+
                         <Select
                           inputId="timezone"
                           isAsync
@@ -137,6 +151,106 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
                     )}
                   </Field>
                 </Box>
+
+                <Box>
+                  <Stack direction={['column', 'row']} spacing={3}>
+                    <Field name="binance.apiKey">
+                      {({ input }) => (
+                        <FormControl id="apiKey">
+                          <FormLabel aria-label="binance api key" mb="0">
+                            <Stack align="center" isInline spacing={1}>
+                              <Text fontSize="17px" fontWeight="bold">
+                                Binance api key
+                              </Text>
+
+                              <Popover title="Binance API key">
+                                Your Binance api key is used in tandem with your Binance api secret to allow us to place
+                                orders for you. To learn more about binance api keys, click{' '}
+                                <Link
+                                  color="blue.500"
+                                  href="https://www.binance.com/en/support/faq/360002502072/"
+                                  isExternal
+                                >
+                                  here
+                                </Link>
+                              </Popover>
+                            </Stack>
+                          </FormLabel>
+
+                          <InputGroup>
+                            <InputRightElement pointerEvents="none">
+                              <Icon as={SiBinance} boxSize="25px" />
+                            </InputRightElement>
+
+                            <Input
+                              isDisabled={!values.binance.update}
+                              name={input.name}
+                              onBlur={input.onBlur}
+                              onChange={input.onChange}
+                              value={values.binance.update ? input.value : '****'}
+                            />
+                          </InputGroup>
+                        </FormControl>
+                      )}
+                    </Field>
+
+                    <Field name="binance.apiSecret">
+                      {({ input }) => (
+                        <FormControl id="apiSecret">
+                          <FormLabel aria-label="binance api secret" mb="0">
+                            <Stack align="center" isInline spacing={1}>
+                              <Text fontSize="17px" fontWeight="bold">
+                                Binance secret key
+                              </Text>
+
+                              <Popover title="Binance API Secret">
+                                Your Binance api secret is used in tandem with your Binance api key to allow us to place
+                                orders for you. To learn more about binance api keys, click{' '}
+                                <Link
+                                  color="blue.500"
+                                  href="https://www.binance.com/en/support/faq/360002502072/"
+                                  isExternal
+                                >
+                                  here
+                                </Link>
+                              </Popover>
+                            </Stack>
+                          </FormLabel>
+
+                          <InputGroup>
+                            <InputRightElement pointerEvents="none">
+                              <Icon as={SiBinance} boxSize="25px" />
+                            </InputRightElement>
+
+                            <Input
+                              isDisabled={!values.binance.update}
+                              name={input.name}
+                              onBlur={input.onBlur}
+                              onChange={input.onChange}
+                              value={values.binance.update ? input.value : '****'}
+                            />
+                          </InputGroup>
+                        </FormControl>
+                      )}
+                    </Field>
+                  </Stack>
+
+                  <Field name="binance.update">
+                    {({ input }) => (
+                      <Text color="gray.500" fontSize="sm" mt="0.5rem">
+                        Update Binance API Keys ?&nbsp;&nbsp;
+                        <Switch
+                          name={input.name}
+                          isChecked={values.binance.update}
+                          onChange={({ target }) => form.mutators.enableBinance(target.checked)}
+                        />
+                        &nbsp;&nbsp;
+                        <span style={{ fontSize: 12 }}>**** Your current keys are hidden for security</span>
+                      </Text>
+                    )}
+                  </Field>
+                </Box>
+
                 <Box>
                   <Stack direction={['column', 'row']} spacing={3}>
                     <Field name="telegram.botToken">
@@ -147,6 +261,7 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
                               <Text fontSize="17px" fontWeight="bold">
                                 Telegram bot token
                               </Text>
+
                               <Popover title="Telegram Notifications">
                                 Your Telegam bot token is used in tandem with your Telegam chatId to send you updates
                                 about your jobs. To learn more about Telegram bots, click{' '}
@@ -160,10 +275,12 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
                               </Popover>
                             </Stack>
                           </FormLabel>
+
                           <InputGroup>
                             <InputRightElement pointerEvents="none">
                               <Icon as={FaTelegramPlane} boxSize="25px" />
                             </InputRightElement>
+
                             <Input
                               isDisabled={!values.telegram.enabled}
                               name={input.name}
@@ -175,6 +292,7 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
                         </FormControl>
                       )}
                     </Field>
+
                     <Field name="telegram.chatId">
                       {({ input }) => (
                         <FormControl id="chatId">
@@ -183,6 +301,7 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
                               <Text fontSize="17px" fontWeight="bold">
                                 Telegram chatId
                               </Text>
+
                               <Popover title="Telegram Notifications">
                                 Your Telegam chatId is used in tandem with your Telegam bot token to send you updates
                                 about your jobs. To learn more about Telegram bots, click{' '}
@@ -196,10 +315,12 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
                               </Popover>
                             </Stack>
                           </FormLabel>
+
                           <InputGroup>
                             <InputRightElement pointerEvents="none">
                               <Icon as={FaTelegramPlane} boxSize="25px" />
                             </InputRightElement>
+
                             <Input
                               isDisabled={!values.telegram.enabled}
                               name={input.name}
@@ -212,10 +333,11 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
                       )}
                     </Field>
                   </Stack>
+
                   <Field name="telegram.enabled">
                     {({ input }) => (
                       <Text color="gray.500" fontSize="sm" mt="0.5rem">
-                        Enable Telegram Notifications ?
+                        Enable Telegram Notifications ?&nbsp;&nbsp;
                         <Switch
                           isChecked={values.telegram.enabled}
                           name={input.name}

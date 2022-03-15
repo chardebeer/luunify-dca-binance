@@ -35,7 +35,7 @@ export default {
         const text = generateMessageText(event, job);
         const response = await fetch(`https://api.telegram.org/bot${telegram.botToken}/sendMessage`, {
           method: 'POST',
-          headers: { 'content-type': 'application/json' },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             chat_id: telegram.chatId,
             parse_mode: 'markdown',
