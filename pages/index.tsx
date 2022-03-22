@@ -7,7 +7,55 @@ import Header from '../components/Header';
 import Jobs from '../components/Jobs';
 import Portfolio from '../components/Portfolio';
 import Settings from '../components/Settings';
+import styled from 'styled-components';
 
+const SignInPage = styled.div`
+  overflow: hidden;
+  background: black;
+  align-content: center;
+  justify-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 100vw;
+  min-height: 100vh;
+`;
+
+const Title = styled.h1`
+  color: #fff;
+  font-weight: 600;
+  font-size: 3rem;
+  font-family: sans-serif;
+`;
+
+const Btn = styled.button`
+  background-image: linear-gradient(to right, #77a1d3 0%, #79cbca 51%, #77a1d3 100%);
+  margin: 10px;
+  padding: 15px 45px;
+  align-self: center;
+  justify-self: center;
+  text-align: center;
+  text-transform: uppercase;
+  transition: 0.5s;
+  background-size: 200% auto;
+  color: white;
+  box-shadow: 0 0 20px #eee;
+  border-radius: 33px;
+  display: block;
+
+  :hover {
+    background-position: right center; /* change the direction of the change here */
+    color: #fff;
+    text-decoration: none;
+  }
+`;
+
+const SubText = styled.div`
+  color: lightgray;
+  font-weight: bold;
+  padding-bottom: calc(1rem + 5vh);
+`;
 export default function Index() {
   const { data: session, status } = useSession();
   const [isGeneralSettingsOpen, setIsGeneralSettingsOpen] = useState(false);
@@ -16,13 +64,15 @@ export default function Index() {
 
   if (!session?.user) {
     return (
-      <>
-        Not signed in <br />
-        <button onClick={() => signIn()} style={{ backgroundColor: 'lightGray' }}>
+      <SignInPage>
+        <Title>Welcome to Muunbot</Title>
+        <br />
+        <SubText>Please sign in or sign up to continue</SubText>
+        <Btn onClick={() => signIn()} style={{ backgroundColor: 'lightGray' }}>
           Sign in
-        </button>
+        </Btn>
         {/* <button onClick={() => signUp()}>Sign up</button> */}
-      </>
+      </SignInPage>
     );
   }
 
