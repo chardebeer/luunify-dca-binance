@@ -20,29 +20,6 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import { useMediaQuery } from '../client-utils';
-import styled from 'styled-components';
-
-const OkBtn = styled.button`
-  background-image: linear-gradient(to right, #77a1d3 0%, #79cbca 51%, #77a1d3 100%);
-  margin: 10px;
-  padding: 15px 45px;
-  align-self: center;
-  justify-self: center;
-  text-align: center;
-  text-transform: uppercase;
-  transition: 0.5s;
-  background-size: 200% auto;
-  color: white;
-  box-shadow: 0 0 20px #eee;
-  border-radius: 33px;
-  display: block;
-
-  :hover {
-    background-position: right center; /* change the direction of the change here */
-    color: #fff;
-    text-decoration: none;
-  }
-`;
 
 type Props = {
   children: React.ReactNode;

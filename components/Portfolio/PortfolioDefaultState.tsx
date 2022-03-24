@@ -18,7 +18,7 @@ export default function PortfolioDefaultState({ assets, onChange, onRefresh, sel
   const [isBalanceHidden, setIsBalanceHidden] = useState(false);
   const { free, locked, total } = assets.find(({ asset }) => asset === selectedSymbol) || {};
   return (
-    <Box bgColor="#FFF" border="1px solid #DADCE0" borderRadius="5px" maxW="800px">
+    <Box bgColor="#FFF" border="1px solid #DADCE0" borderRadius="15px" maxW="800px">
       <Flex align="center" borderBottom="1px solid #f0f0f0" justify="space-between" p={2.5}>
         <Text as="h3" fontSize="2xl" fontWeight="semibold">
           Portfolio
