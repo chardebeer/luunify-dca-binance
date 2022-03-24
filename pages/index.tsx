@@ -56,6 +56,24 @@ const SubText = styled.div`
   font-weight: bold;
   padding-bottom: calc(1rem + 5vh);
 `;
+
+const MessageText = styled.h1`
+  color: #333;
+  font-weight: bold;
+`;
+
+const Container = styled.div`
+  background: lightGray;
+  align-content: center;
+  justify-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 100vw;
+  min-height: 100vh;
+`;
+
 export default function Index() {
   const { data: session, status } = useSession();
   const [isGeneralSettingsOpen, setIsGeneralSettingsOpen] = useState(false);
@@ -96,21 +114,23 @@ export default function Index() {
   return (
     <ErrorBoundary>
       <Header onGlobalSettingsClick={() => setIsGeneralSettingsOpen(true)} />
-      {session?.user.binance.apiKey && session?.user.binance.apiSecret ? (
-        renderContent()
-      ) : (
-        <Box>
-          <Text fontSize="xl">Please add binance api keys in settings to continue</Text>
-        </Box>
-      )}
-      <Footer />
-      {isGeneralSettingsOpen && (
-        <Settings
-          initialValues={session.user}
-          isOpen={isGeneralSettingsOpen}
-          onClose={() => setIsGeneralSettingsOpen(false)}
-        />
-      )}
+      <Container>
+        {session?.user.binance.apiKey && session?.user.binance.apiSecret ? (
+          renderContent()
+        ) : (
+          <Box>
+            <MessageText>Please add binance api keys in settings to continue</MessageText>
+          </Box>
+        )}
+        {/* <Footer /> */}
+        {isGeneralSettingsOpen && (
+          <Settings
+            initialValues={session.user}
+            isOpen={isGeneralSettingsOpen}
+            onClose={() => setIsGeneralSettingsOpen(false)}
+          />
+        )}
+      </Container>
     </ErrorBoundary>
   );
 }

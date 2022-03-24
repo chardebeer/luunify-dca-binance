@@ -59,8 +59,11 @@ export default NextAuth({
           user.binance.apiKey = '****';
           user.binance.apiSecret = '****';
         } else if (user) {
+          console.log('user', user);
+          user.binance = { update: false };
           user.binance.apiKey = undefined;
           user.binance.apiSecret = undefined;
+          console.log('end');
         }
 
         token.user = user;

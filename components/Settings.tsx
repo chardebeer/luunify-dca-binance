@@ -179,10 +179,11 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
 
                           <InputGroup>
                             <InputRightElement pointerEvents="none">
-                              <Icon as={SiBinance} boxSize="25px" />
+                              <Icon as={SiBinance} boxSize="25px" color="#F0B90B" />
                             </InputRightElement>
 
                             <Input
+                              bgColor="white"
                               isDisabled={!values.binance.update}
                               name={input.name}
                               onBlur={input.onBlur}
@@ -219,10 +220,11 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
 
                           <InputGroup>
                             <InputRightElement pointerEvents="none">
-                              <Icon as={SiBinance} boxSize="25px" />
+                              <Icon as={SiBinance} boxSize="25px" color="#F0B90B" />
                             </InputRightElement>
 
                             <Input
+                              bgColor="white"
                               isDisabled={!values.binance.update}
                               name={input.name}
                               onBlur={input.onBlur}
@@ -243,6 +245,7 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
                           name={input.name}
                           isChecked={values.binance.update}
                           onChange={({ target }) => form.mutators.enableBinance(target.checked)}
+                          color="#622EC3"
                         />
                         &nbsp;&nbsp;
                         <span style={{ fontSize: 12 }}>**** Your current keys are hidden for security</span>
@@ -278,10 +281,11 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
 
                           <InputGroup>
                             <InputRightElement pointerEvents="none">
-                              <Icon as={FaTelegramPlane} boxSize="25px" />
+                              <Icon as={FaTelegramPlane} boxSize="25px" color="#8ab4f8" />
                             </InputRightElement>
 
                             <Input
+                              bgColor="white"
                               isDisabled={!values.telegram.enabled}
                               name={input.name}
                               onBlur={input.onBlur}
@@ -318,10 +322,11 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
 
                           <InputGroup>
                             <InputRightElement pointerEvents="none">
-                              <Icon as={FaTelegramPlane} boxSize="25px" />
+                              <Icon as={FaTelegramPlane} boxSize="25px" color="#8ab4f8" />
                             </InputRightElement>
 
                             <Input
+                              bgColor="white"
                               isDisabled={!values.telegram.enabled}
                               name={input.name}
                               onBlur={input.onBlur}
@@ -342,6 +347,7 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
                           isChecked={values.telegram.enabled}
                           name={input.name}
                           onChange={({ target }) => form.mutators.enableTelegram(target.checked)}
+                          color="#622EC3"
                         />
                       </Text>
                     )}
