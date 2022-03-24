@@ -126,7 +126,7 @@ const Overlay = React.forwardRef<HTMLButtonElement, Props>(
               </Text>
             </ModalHeader>
           </Box>
-          <ModalCloseButton bgColor="black" borderRadius="full" />
+          <ModalCloseButton bgColor="black" textColor="white" borderRadius="full" borderWidth={0} />
           <ModalBody>{children}</ModalBody>
           <ModalFooter borderTop="1px solid #E2E8F0" mt="20px">
             {footerContent}
