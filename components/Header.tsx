@@ -14,7 +14,7 @@ export default function Header({ onGlobalSettingsClick }: Props) {
     <Flex
       align="center"
       as="header"
-      bgColor="#FFF"
+      bgColor="#333333"
       justify="space-between"
       left="0"
       position="sticky"
@@ -29,7 +29,7 @@ export default function Header({ onGlobalSettingsClick }: Props) {
         <MenuButton
           aria-label="main menu"
           as={IconButton}
-          icon={<HamburgerIcon boxSize="25px" />}
+          icon={<HamburgerIcon boxSize="25px" color="#fff" />}
           minW="auto"
           variant="unstyled"
         />

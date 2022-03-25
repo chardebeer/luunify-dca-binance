@@ -146,7 +146,7 @@ export default function JobList({ defaultTimezone, jobs, handleDelete, handleUpd
   return (
     <>
       <Box overflow="auto">
-        <Text fontSize="xl" fontWeight="bold" mb="20px">{`Jobs(${jobs.length})`}</Text>
+        <Text fontSize="2xl" fontWeight="bold" mb="20px">{`Jobs(${jobs.length})`}</Text>
         {isMobile ? (
           <>{jobsArray}</>
         ) : (
