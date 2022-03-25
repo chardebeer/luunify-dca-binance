@@ -14,6 +14,7 @@ const JobListEmptyState = dynamic(() => import('./JobListEmptyState'), {
     return <JobListLoadingState />;
   },
 });
+
 const JobListErrorState = dynamic(() => import('./JobListErrorState'), {
   loading: ({ error }) => {
     if (error) {
@@ -22,9 +23,11 @@ const JobListErrorState = dynamic(() => import('./JobListErrorState'), {
     return <JobListLoadingState />;
   },
 });
+
 const JobForm = dynamic(() => import('../JobForm'), {
   loading: ({ error }) => <Loading error={error} />,
 });
+
 const JobList = dynamic(() => import('./JobList'), {
   loading: ({ error }) => {
     if (error) {

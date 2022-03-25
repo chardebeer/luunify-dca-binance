@@ -2,18 +2,14 @@ import {
   Box,
   FormControl,
   FormErrorMessage,
-  FormHelperText,
   FormLabel,
   Input,
   InputGroup,
   InputRightAddon,
-  Link,
   Stack,
   Switch,
   Text,
 } from '@chakra-ui/react';
-import { parseExpression } from 'cron-parser';
-import cronstrue from 'cronstrue';
 import { diff } from 'deep-object-diff';
 import debounce from 'lodash.debounce';
 import React, { useRef, useState } from 'react';
@@ -23,6 +19,7 @@ import { Job } from '../types';
 import Overlay from './Overlay';
 import Popover from './Popover';
 import Select from './Select';
+import CronGenerator from './CronGenerator';
 
 type Props = {
   defaultTimezone: string;
@@ -41,14 +38,6 @@ type Values = {
   timezone: string;
   useDefaultTimezone: boolean;
 };
-
-function getCronDescription(cron: string) {
-  try {
-    return cronstrue.toString(cron, { verbose: true });
-  } catch {
-    return null;
-  }
-}
 
 export default function JobForm({ defaultTimezone, isOpen, job, onFormClose, onSubmitSuccess }: Props) {
   const isEditMode = !!job;
@@ -100,17 +89,6 @@ export default function JobForm({ defaultTimezone, isOpen, job, onFormClose, onS
       errors.amount = 'Please provide a valid amount';
     } else if (+values.amount < minNotional) {
       errors.amount = `Amount must be greater than or eqaul to ${minNotional}`;
-    }
-
-    if (!values.schedule) {
-      errors.schedule = 'Please provide a valid schedule';
-    } else {
-      try {
-        parseExpression(values.schedule);
-        cronstrue.toString(values.schedule);
-      } catch {
-        errors.schedule = 'Invalid cron syntax';
-      }
     }
 
     if (!values.timezone && !values.useDefaultTimezone) {
@@ -183,6 +161,7 @@ export default function JobForm({ defaultTimezone, isOpen, job, onFormClose, onS
       ref={btnRef}
       subTitle={subTitle}
       title={title}
+      size="6xl"
     >
       <Form
         initialValues={initialValues}
@@ -192,6 +171,9 @@ export default function JobForm({ defaultTimezone, isOpen, job, onFormClose, onS
           },
           updateQuoteAsset([value], state, { changeValue }) {
             changeValue(state, 'quoteAsset', () => value);
+          },
+          updateSchedule([value], state, { changeValue }) {
+            changeValue(state, 'schedule', () => value);
           },
           updateTimezone([value], state, { changeValue }) {
             changeValue(state, 'timezone', () => value);
@@ -212,175 +194,162 @@ export default function JobForm({ defaultTimezone, isOpen, job, onFormClose, onS
               btnRef.current.disabled = false;
             }
           }
+
           return (
             <form aria-label={isEditMode ? 'edit job' : 'create job'} id="job" onSubmit={handleSubmit}>
-              <Stack spacing={4}>
-                <Field name="jobName">
-                  {({ input, meta }) => (
-                    <FormControl id="jobName" isInvalid={meta.error && meta.touched}>
-                      <FormLabel mb="1px">
-                        <Stack align="center" isInline spacing={1}>
-                          <Text fontSize="17px" fontWeight="bold">
-                            Name
-                          </Text>
-                          <Popover title="Job name">A discernible name for your recurring job.</Popover>
-                        </Stack>
-                      </FormLabel>
-                      <Input
-                        name={input.name}
-                        onBlur={input.onBlur}
-                        onChange={input.onChange}
-                        value={input.value}
-                        placeholder="BNB Daily"
-                      />
-                      <FormErrorMessage>{meta.error}</FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
-                <Field name="symbol">
-                  {({ input, meta }) => (
-                    <FormControl id="symbol" isInvalid={meta.error && meta.touched}>
-                      <FormLabel mb="1px">
-                        <Stack align="center" isInline spacing={1}>
-                          <Text fontSize="17px" fontWeight="bold">
-                            Symbol
-                          </Text>
-                          <Popover title="Symbol">
-                            This is the base asset and quote asset pair you want to trade e.g BTCUSDT
-                          </Popover>
-                        </Stack>
-                      </FormLabel>
-                      <Select
-                        isAsync
-                        isDisabled={isEditMode}
-                        loadOptions={loadSymbols}
-                        name={input.name}
-                        getOptionLabel={(option) => option.symbol}
-                        getOptionValue={(option) => option.symbol}
-                        onChange={(option) => {
-                          form.mutators.updateSymbol(option.symbol);
-                          form.mutators.updateQuoteAsset(option.quoteAsset);
-                          setMinNotional(option.minNotional);
-                        }}
-                        placeholder="BNBUSDT"
-                        value={{ symbol: values.symbol }}
-                      />
-                      <FormErrorMessage>{meta.error}</FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
-                <Field name="amount">
-                  {({ input, meta }) => {
-                    const isInvalid = (meta.touched && meta.error) || meta.submitError;
-                    return (
-                      <FormControl id="amount" isInvalid={isInvalid}>
-                        <FormLabel mb="1px">
-                          <Stack align="center" isInline spacing={1}>
-                            <Text fontSize="17px" fontWeight="bold">
-                              Amount
-                            </Text>
-                            <Popover title="Amount">
-                              This is the total amount of the quote asset you are willing to spend—, e.g, a value of 10
-                              for BNBUSDT would equate to buying 10 USDT worth of BNB.
-                            </Popover>
-                          </Stack>
-                        </FormLabel>
-                        <InputGroup>
-                          <Input
-                            name={input.name}
-                            onBlur={input.onBlur}
-                            onChange={input.onChange}
-                            placeholder="0"
-                            type="number"
-                            value={input.value}
-                          />
-                          <InputRightAddon>{values.quoteAsset}</InputRightAddon>
-                        </InputGroup>
-                        <FormErrorMessage>{meta.error || meta.submitError}</FormErrorMessage>
-                      </FormControl>
-                    );
-                  }}
-                </Field>
-                <Field name="schedule">
-                  {({ input, meta }) => (
-                    <FormControl id="schedule" isInvalid={meta.error && meta.touched}>
-                      <FormLabel mb="1px">
-                        <Stack align="center" isInline spacing={1}>
-                          <Text fontSize="17px" fontWeight="bold">
-                            Schedule
-                          </Text>
-                          <Popover title="Schedule">
-                            Your schedule determines when your job runs. If you need help generating the cron syntax for
-                            your job, try a cron-generator like{' '}
-                            <Link color="blue.500" href="https://crontab.cronhub.io/" isExternal>
-                              CronTab
-                            </Link>
-                          </Popover>
-                        </Stack>
-                      </FormLabel>
-                      <Input
-                        name={input.name}
-                        onBlur={input.onBlur}
-                        onChange={input.onChange}
-                        placeholder="* * * * *"
-                        value={input.value}
-                        isDisabled={isEditMode}
-                      />
-                      {!meta.error && <FormHelperText>{getCronDescription(input.value)}</FormHelperText>}
-                      <FormErrorMessage>{meta.error}</FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
-                <Box>
-                  <Field name="timezone">
+              <Box display="flex" flexDirection="row">
+                <Stack spacing={4} width="60%">
+                  <Field name="jobName">
                     {({ input, meta }) => (
-                      <FormControl id="timezone" isInvalid={meta.error && meta.touched}>
+                      <FormControl id="jobName" isInvalid={meta.error && meta.touched}>
                         <FormLabel mb="1px">
                           <Stack align="center" isInline spacing={1}>
                             <Text fontSize="17px" fontWeight="bold">
-                              Timezone
+                              Name
                             </Text>
-                            <Popover title="Timezone">
-                              Set a specific timezone for your job schedule or use your global default.
-                            </Popover>
+                            <Popover title="Job name">A discernible name for your recurring job.</Popover>
                           </Stack>
                         </FormLabel>
-                        <Select
-                          isAsync
-                          isDisabled={values.useDefaultTimezone}
-                          loadOptions={loadTimezones}
+
+                        <Input
+                          bgColor="white"
                           name={input.name}
-                          onChange={({ value }) => {
-                            form.mutators.updateTimezone(value);
-                          }}
-                          placeholder="Africa/Lagos"
-                          value={generateSelectOption(values.timezone)}
+                          onBlur={input.onBlur}
+                          onChange={input.onChange}
+                          value={input.value}
+                          placeholder="BNB Daily"
                         />
                         <FormErrorMessage>{meta.error}</FormErrorMessage>
                       </FormControl>
                     )}
                   </Field>
-                  {defaultTimezone && (
-                    <Field name="useDefaultTimezone">
-                      {({ input }) => (
-                        <Text color="gray.500" fontSize="sm" mt="0.5rem">
-                          Use default timezone ?{'  '}
-                          <Switch
-                            isChecked={values.useDefaultTimezone}
+
+                  <Field name="symbol">
+                    {({ input, meta }) => (
+                      <FormControl id="symbol" isInvalid={meta.error && meta.touched}>
+                        <FormLabel mb="1px">
+                          <Stack align="center" isInline spacing={1}>
+                            <Text fontSize="17px" fontWeight="bold">
+                              Symbol
+                            </Text>
+                            <Popover title="Symbol">
+                              This is the base asset and quote asset pair you want to trade e.g BTCUSDT
+                            </Popover>
+                          </Stack>
+                        </FormLabel>
+
+                        <Select
+                          isAsync
+                          isDisabled={isEditMode}
+                          loadOptions={loadSymbols}
+                          name={input.name}
+                          getOptionLabel={(option) => option.symbol}
+                          getOptionValue={(option) => option.symbol}
+                          onChange={(option) => {
+                            form.mutators.updateSymbol(option.symbol);
+                            form.mutators.updateQuoteAsset(option.quoteAsset);
+                            setMinNotional(option.minNotional);
+                          }}
+                          placeholder="BNBUSDT"
+                          value={{ symbol: values.symbol }}
+                        />
+                        <FormErrorMessage>{meta.error}</FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+
+                  <Field name="amount">
+                    {({ input, meta }) => {
+                      const isInvalid = (meta.touched && meta.error) || meta.submitError;
+                      return (
+                        <FormControl id="amount" isInvalid={isInvalid}>
+                          <FormLabel mb="1px">
+                            <Stack align="center" isInline spacing={1}>
+                              <Text fontSize="17px" fontWeight="bold">
+                                Amount
+                              </Text>
+                              <Popover title="Amount">
+                                This is the total amount of the quote asset you are willing to spend—, e.g, a value of
+                                10 for BNBUSDT would equate to buying 10 USDT worth of BNB.
+                              </Popover>
+                            </Stack>
+                          </FormLabel>
+
+                          <InputGroup>
+                            <Input
+                              bgColor="white"
+                              name={input.name}
+                              onBlur={input.onBlur}
+                              onChange={input.onChange}
+                              placeholder="0"
+                              type="number"
+                              value={input.value}
+                            />
+                            <InputRightAddon>{values.quoteAsset}</InputRightAddon>
+                          </InputGroup>
+                          <FormErrorMessage>{meta.error || meta.submitError}</FormErrorMessage>
+                        </FormControl>
+                      );
+                    }}
+                  </Field>
+
+                  <Box>
+                    <Field name="timezone">
+                      {({ input, meta }) => (
+                        <FormControl id="timezone" isInvalid={meta.error && meta.touched}>
+                          <FormLabel mb="1px">
+                            <Stack align="center" isInline spacing={1}>
+                              <Text fontSize="17px" fontWeight="bold">
+                                Timezone
+                              </Text>
+                              <Popover title="Timezone">
+                                Set a specific timezone for your job schedule or use your global default.
+                              </Popover>
+                            </Stack>
+                          </FormLabel>
+
+                          <Select
+                            isAsync
+                            isDisabled={values.useDefaultTimezone}
+                            loadOptions={loadTimezones}
                             name={input.name}
-                            onChange={({ target }) => {
-                              if (target.checked) {
-                                form.mutators.updateTimezone(defaultTimezone);
-                              }
-                              form.mutators.updateUseDefaultTimezone(target.checked);
+                            onChange={({ value }) => {
+                              form.mutators.updateTimezone(value);
                             }}
+                            placeholder="Africa/Lagos"
+                            value={generateSelectOption(values.timezone)}
                           />
-                        </Text>
+                          <FormErrorMessage>{meta.error}</FormErrorMessage>
+                        </FormControl>
                       )}
                     </Field>
-                  )}
+
+                    {defaultTimezone && (
+                      <Field name="useDefaultTimezone">
+                        {({ input }) => (
+                          <Text color="gray.600" fontSize="sm" mt="0.5rem">
+                            Use default timezone ?{'  '}
+                            <Switch
+                              isChecked={values.useDefaultTimezone}
+                              name={input.name}
+                              onChange={({ target }) => {
+                                if (target.checked) {
+                                  form.mutators.updateTimezone(defaultTimezone);
+                                }
+                                form.mutators.updateUseDefaultTimezone(target.checked);
+                              }}
+                            />
+                          </Text>
+                        )}
+                      </Field>
+                    )}
+                  </Box>
+                </Stack>
+
+                <Box height="auto" display="flex" flexDirection="column" justifyContent="center" ml="32px">
+                  <CronGenerator onUpdate={(value) => form.mutators.updateSchedule(value)} />
                 </Box>
-              </Stack>
+              </Box>
             </form>
           );
         }}

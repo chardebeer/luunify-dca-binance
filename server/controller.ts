@@ -202,7 +202,7 @@ export default {
         return { status: 400, message: `job id ${jobId} is invalid` };
       }
 
-      let invalidField = null;
+      let invalidField: string | null = null;
       ['schedule', 'symbol', 'quoteAsset'].forEach((field) => {
         if (field in data) {
           invalidField = field;

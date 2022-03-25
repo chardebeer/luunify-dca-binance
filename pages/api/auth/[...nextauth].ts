@@ -5,7 +5,7 @@ import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
 import client from 'server/lib/mongoClient';
 import mongoose from 'mongoose';
 import { User } from 'types';
-import { decrypt } from 'server/utils';
+import { decrypt, encrypt } from 'server/utils';
 
 export default NextAuth({
   session: {
@@ -59,11 +59,9 @@ export default NextAuth({
           user.binance.apiKey = '****';
           user.binance.apiSecret = '****';
         } else if (user) {
-          console.log('user', user);
           user.binance = { update: false };
           user.binance.apiKey = undefined;
           user.binance.apiSecret = undefined;
-          console.log('end');
         }
 
         token.user = user;
@@ -101,7 +99,7 @@ function text({ url, host }: any) {
 async function updateUser(email: string) {
   const { TELEGRAM_BOT_TOKEN = '', TELEGRAM_CHAT_ID = '', TELEGRAM_ENABLED } = process.env;
 
-  const updateDoc = {
+  const updateDoc: Partial<User> = {
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     telegram: {
       botToken: TELEGRAM_BOT_TOKEN,
@@ -112,6 +110,11 @@ async function updateUser(email: string) {
       update: false,
     },
   };
+
+  if (process.env.BINANCE_TESTNET_ENABLED === 'true' && updateDoc.binance) {
+    updateDoc.binance.apiKey = encrypt(process.env.BINANCE_API_KEY || '');
+    updateDoc.binance.apiSecret = encrypt(process.env.BINANCE_API_SECRET || '');
+  }
 
   return await mongoose
     .model('User')

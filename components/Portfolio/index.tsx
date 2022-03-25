@@ -18,6 +18,7 @@ const PortfolioDefaultState = dynamic(() => import('./PortfolioDefaultState'), {
     return <PortfolioLoadingState />;
   },
 });
+
 const PortfolioErrorState = dynamic(() => import('./PortfolioErrorState'), {
   loading: ({ error }) => {
     if (error) {
@@ -28,9 +29,7 @@ const PortfolioErrorState = dynamic(() => import('./PortfolioErrorState'), {
 });
 
 export default function Portfolio() {
-  const [assets, updateAssets] = useState<Assets>([
-    { asset: 'USDT', free: '0.00', locked: '0.00', total: 0.0 },
-  ]);
+  const [assets, updateAssets] = useState<Assets>([{ asset: 'USDT', free: '0.00', locked: '0.00', total: 0.0 }]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedSymbol, setSelectedSymbol] = useState('USDT');
   const [error, setError] = useState(false);
@@ -39,6 +38,7 @@ export default function Portfolio() {
     try {
       setIsLoading(true);
       const response = await fetch('/api/balance');
+
       if (response.ok) {
         const { data: balances } = await response.json();
         if (balances.length > 0) {

@@ -53,10 +53,11 @@ type Props = {
   onClose: () => void;
   subTitle?: string;
   title: string;
+  size?: string;
 };
 
 const Overlay = React.forwardRef<HTMLButtonElement, Props>(
-  ({ children, formId, footer, isLoading, isOpen, onClose, subTitle, title }, ref) => {
+  ({ children, formId, footer, isLoading, isOpen, onClose, subTitle, title, size }, ref) => {
     const isMobile = useMediaQuery('(max-width: 600px)');
 
     const footerContent = footer || (
@@ -113,7 +114,7 @@ const Overlay = React.forwardRef<HTMLButtonElement, Props>(
     }
 
     return (
-      <Modal isCentered isOpen={isOpen} onClose={onClose} size="4xl">
+      <Modal isCentered isOpen={isOpen} onClose={onClose} size={size || '4xl'}>
         <ModalOverlay />
         <ModalContent bgColor="#EEE">
           <Box borderBottom="1px solid #E2E8F0" bgColor="white">

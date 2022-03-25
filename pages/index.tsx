@@ -1,8 +1,7 @@
-import { Box, Text } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { signIn, useSession } from 'next-auth/react';
 import React, { useState } from 'react';
 import ErrorBoundary from '../components/ErrorBoundary';
-import Footer from '../components/Footer';
 import Header from '../components/Header';
 import Jobs from '../components/Jobs';
 import Portfolio from '../components/Portfolio';
@@ -115,7 +114,7 @@ export default function Index() {
     <ErrorBoundary>
       <Header onGlobalSettingsClick={() => setIsGeneralSettingsOpen(true)} />
       <Container>
-        {session?.user.binance.apiKey && session?.user.binance.apiSecret ? (
+        {session?.user.binance?.apiKey && session?.user.binance?.apiSecret ? (
           renderContent()
         ) : (
           <Box>

@@ -1,4 +1,3 @@
-import { parseExpression } from 'cron-parser';
 import cronstrue from 'cronstrue';
 import moment from 'moment-timezone';
 import Joi, { PresenceMode, ValidationError } from 'joi';
@@ -30,9 +29,7 @@ export function validateTimezone(tz: string, helper: Joi.CustomHelpers) {
 
 function validateCronSyntax(schedule: string, helper: any) {
   try {
-    parseExpression(schedule);
-    cronstrue.toString(schedule);
-    return schedule;
+    return cronstrue.toString(schedule).length ? schedule : helper.message(`Cron syntax ${schedule} is invalid`);
   } catch {
     return helper.message(`Cron syntax ${schedule} is invalid`);
   }

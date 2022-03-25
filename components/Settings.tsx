@@ -239,7 +239,7 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
 
                   <Field name="binance.update">
                     {({ input }) => (
-                      <Text color="gray.500" fontSize="sm" mt="0.5rem">
+                      <Text color="gray.600" fontSize="sm" mt="0.5rem">
                         Update Binance API Keys ?&nbsp;&nbsp;
                         <Switch
                           name={input.name}
@@ -341,7 +341,7 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
 
                   <Field name="telegram.enabled">
                     {({ input }) => (
-                      <Text color="gray.500" fontSize="sm" mt="0.5rem">
+                      <Text color="gray.600" fontSize="sm" mt="0.5rem">
                         Enable Telegram Notifications ?&nbsp;&nbsp;
                         <Switch
                           isChecked={values.telegram.enabled}
