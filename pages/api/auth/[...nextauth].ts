@@ -8,7 +8,6 @@ import { User } from 'types';
 import { decrypt, encrypt } from 'server/utils';
 
 export default NextAuth({
-  debug: true,
   session: {
     strategy: 'jwt',
     maxAge: 2592000,

@@ -7,7 +7,7 @@ import agenda from './lib/agenda';
 import rootLogger from './lib/logger';
 import sentry from './lib/sentry';
 
-const port = Number(process.env.PORT) || 3000;
+const port = Number(process.env.PORT) || 80;
 const MONGODB_URI = process.env.MONGODB_URI || '';
 const dev = process.env.NODE_ENV === 'development';
 const nextApp = next({ dev, dir: path.dirname(__dirname) });
