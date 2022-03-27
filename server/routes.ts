@@ -1,9 +1,13 @@
 import { Router } from 'express';
 import { Request } from 'express-serve-static-core';
 import { getToken } from 'next-auth/jwt';
+import { Client, resources } from 'coinbase-commerce-node';
 import { ParsedQs } from 'qs';
 import controller from './controller';
 import { encrypt } from './utils';
+
+Client.init('5a66701a-9784-4274-be6f-4fc947215a71');
+const { Charge } = resources;
 
 const router = Router();
 
@@ -122,6 +126,26 @@ router.patch('/api/orders/:orderId', async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+router.get('/api/charge', async (_, res) => {
+  const chargeData = {
+    name: 'Test',
+    description: 'Useless text',
+    local_price: {
+      amount: 10.0,
+      currency: 'USD',
+    },
+    pricing_type: 'fixed_price',
+    metadata: {
+      user: 'testuserid',
+    },
+  };
+
+  const charge = await Charge.create(chargeData as any);
+  console.log('charge', charge);
+
+  res.status(200).json(charge);
 });
 
 export default router;
