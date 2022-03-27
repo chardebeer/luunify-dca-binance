@@ -46,11 +46,6 @@ const Btn = styled.button`
   }
 `;
 
-const SubText = styled.div`
-  color: lightgray;
-  font-weight: bold;
-  padding-bottom: calc(1rem + 5vh);
-`;
 interface Props {
   csrfToken?: string;
 }
