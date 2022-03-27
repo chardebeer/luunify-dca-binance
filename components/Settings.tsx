@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   FormControl,
   FormLabel,
   Icon,
@@ -14,7 +15,7 @@ import {
 import { diff } from 'deep-object-diff';
 import debounce from 'lodash.debounce';
 import { encode } from 'base-64';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Field, Form } from 'react-final-form';
 import { FaTelegramPlane } from 'react-icons/fa';
 import { SiBinance } from 'react-icons/si';
@@ -32,11 +33,23 @@ type Props = {
 
 export default function Settings({ onClose, initialValues, isOpen }: Props) {
   const [isLoading, setIsLoading] = useState(false);
+  const [paymentUrl, setPaymentUrl] = useState('');
   const btnRef = useRef<HTMLButtonElement>(null);
 
   const loadTimezones = debounce((input, cb) => {
     getTimezones(input).then((timezones) => cb(timezones));
   }, 700);
+
+  useEffect(() => {
+    async function createCharge() {
+      const res = await fetch('http://localhost:3000/api/createCharge?email=' + initialValues.email);
+      const data = await res.json();
+
+      setPaymentUrl(data.hosted_url);
+    }
+
+    !paymentUrl.length && createCharge();
+  }, []);
 
   const onSubmit = async (values: User) => {
     try {
@@ -85,11 +98,11 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
 
   return (
     <Overlay
-      isLoading={isLoading}
+      isLoading={isLoading || !paymentUrl.length}
       isOpen={isOpen}
       formId="settings"
       onClose={() => {
-        if (!isLoading) {
+        if (!isLoading || !paymentUrl.length) {
           onClose();
         }
       }}
@@ -352,6 +365,19 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
                       </Text>
                     )}
                   </Field>
+                </Box>
+
+                <Box display="flex" justifyContent="center" alignItems="center" mt="16px">
+                  <Button
+                    bgImage="linear-gradient(to right, #77a1d3 0%, #79cbca 51%, #77a1d3 100%)"
+                    textColor="white"
+                    borderRadius="2xl"
+                    boxShadow="xl"
+                    isLoading={!paymentUrl.length}
+                    onClick={() => (window.location.href = paymentUrl)}
+                  >
+                    Pay Subscription
+                  </Button>
                 </Box>
               </Stack>
             </form>

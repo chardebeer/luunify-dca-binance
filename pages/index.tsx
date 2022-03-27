@@ -1,4 +1,4 @@
-import { Box, Link } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { signIn, useSession } from 'next-auth/react';
 import React, { useState } from 'react';
 import ErrorBoundary from '../components/ErrorBoundary';
@@ -76,15 +76,6 @@ const Container = styled.div`
 export default function Index() {
   const { data: session, status } = useSession();
   const [isGeneralSettingsOpen, setIsGeneralSettingsOpen] = useState(false);
-  const [url, setUrl] = useState('');
-
-  async function pay() {
-    const res = await fetch('http://localhost:3000/api/charge');
-    const data = await res.json();
-
-    console.log('data', data);
-    setUrl(data.hosted_url);
-  }
 
   if (status === 'loading') return <p>Loading...</p>;
 
@@ -113,10 +104,6 @@ export default function Index() {
         px={[2, 5]}
         py={[2, 5]}
       >
-        <Btn onClick={() => pay()} style={{ backgroundColor: 'lightGray' }}>
-          Sign in
-        </Btn>
-        {url.length > 0 && <Link href={url}>Pay now</Link>}
         <Portfolio />
         <Jobs defaultTimezone={session?.user.timezone || ''} />
       </Box>

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { Request } from 'express-serve-static-core';
 import { getToken } from 'next-auth/jwt';
-import { Client, resources } from 'coinbase-commerce-node';
+import { Client, resources, Webhook } from 'coinbase-commerce-node';
 import { ParsedQs } from 'qs';
 import controller from './controller';
 import { encrypt } from './utils';
@@ -128,24 +128,57 @@ router.patch('/api/orders/:orderId', async (req, res, next) => {
   }
 });
 
-router.get('/api/charge', async (_, res) => {
+router.get('/api/createCharge', async (req, res, next) => {
   const chargeData = {
-    name: 'Test',
-    description: 'Useless text',
+    name: 'Muunbot',
+    description: 'Muunbot subscription',
     local_price: {
       amount: 10.0,
       currency: 'USD',
     },
     pricing_type: 'fixed_price',
     metadata: {
-      user: 'testuserid',
+      user: req.query.email,
     },
   };
 
-  const charge = await Charge.create(chargeData as any);
-  console.log('charge', charge);
+  try {
+    res.status(200).json(await Charge.create(chargeData as any));
+  } catch (err) {
+    next(err);
+  }
+});
 
-  res.status(200).json(charge);
+router.post('/api/coinbase-notification', async (req, res) => {
+  const rawBody = req.body;
+  console.log('rawBody', rawBody);
+
+  const signature = req.headers['x-cc-webhook-signature'] || '';
+  const webhookSecret = 'b17d23ee-40da-4201-ada5-f77a016c0d57';
+
+  try {
+    const event = Webhook.verifyEventBody(rawBody, signature as string, webhookSecret);
+    console.log('event', event);
+
+    if (event.type === 'charge:pending') {
+      // TODO
+      // user paid, but transaction not confirm on blockchain yet
+    }
+
+    if (event.type === 'charge:confirmed') {
+      // TODO
+      // all good, charge confirmed
+    }
+
+    if (event.type === 'charge:failed') {
+      // TODO
+      // charge failed or expired
+    }
+
+    res.status(200).send(`success ${event.id}`);
+  } catch (error) {
+    res.status(400).send('failure!');
+  }
 });
 
 export default router;
