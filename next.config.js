@@ -1,4 +1,5 @@
 module.exports = {
+  trailingSlash: true,
   productionBrowserSourceMaps: true,
   webpack: (config, { isServer }) => {
     if (!isServer) {
