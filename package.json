@@ -13,10 +13,6 @@
     "start": "node dist/index | bunyan",
     "test": "cross-env NODE_ENV=test jest"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/MlkMahmud/binance-dca-bot.git"
-  },
   "keywords": [],
   "devDependencies": {
     "@babel/cli": "^7.16.7",
