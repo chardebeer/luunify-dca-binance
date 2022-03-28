@@ -1,7 +1,7 @@
 import React from 'react';
 import { getCsrfToken } from 'next-auth/react';
 import { CtxOrReq } from 'next-auth/client/_utils';
-
+import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
 const SignInPage = styled.div`
@@ -51,10 +51,12 @@ interface Props {
 }
 
 export default function SignIn({ csrfToken }: Props) {
+  const { callbackUrl } = useRouter().query;
+
   return (
     <SignInPage>
       <Title> Please enter your email address.</Title>
-      <form method="post" action="/api/auth/signin/email">
+      <form method="post" action={`/api/auth/signin/email?callbackUrl=${callbackUrl}`}>
         <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
         <input type="email" id="email" name="email" style={{ border: '1px solid grey' }} />
         <Btn type="submit">Sign in with Email</Btn>

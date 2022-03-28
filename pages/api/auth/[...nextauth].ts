@@ -28,12 +28,7 @@ export default NextAuth({
         },
       },
       from: process.env.EMAIL_FROM,
-      async sendVerificationRequest({
-        //THIS IS FOR EMAIL CUSTOMIZATION
-        identifier: email,
-        url,
-        provider: { server, from },
-      }) {
+      async sendVerificationRequest({ identifier: email, url, provider: { server, from } }) {
         const { host } = new URL(url);
         const transport = nodemailer.createTransport(server);
         await transport.sendMail({
