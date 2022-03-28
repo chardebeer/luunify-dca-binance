@@ -149,12 +149,15 @@ router.get('/api/createCharge', async (req, res, next) => {
   }
 });
 
-router.post('/coinbase-notification', express.raw({ type: 'application.json' }), async (req, res) => {
+router.post('/coinbase-notification', async (req, res) => {
   const signature = req.headers['x-cc-webhook-signature'] || '';
-  const buf = await buffer(req);
 
   try {
-    const event = Webhook.verifyEventBody(buf.toString(), signature as string, process.env.WEBHOOK_SECRET as string);
+    const event = Webhook.verifyEventBody(
+      (req as any).rawBody,
+      signature as string,
+      process.env.WEBHOOK_SECRET as string
+    );
     console.log('e', JSON.stringify(event));
 
     if (event.type === 'charge:pending') {
