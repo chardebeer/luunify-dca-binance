@@ -150,7 +150,7 @@ router.get('/api/createCharge', async (req, res, next) => {
 
 router.post('/coinbase-notification', express.raw({ type: 'application/json' }), async (req, res) => {
   const signature = req.headers['x-cc-webhook-signature'] || '';
-
+  console.log('req.body,', req.body);
   try {
     const event = Webhook.verifyEventBody(req.body, signature as string, process.env.WEBHOOK_SECRET as string);
     console.log('e', JSON.stringify(event));
@@ -163,6 +163,11 @@ router.post('/coinbase-notification', express.raw({ type: 'application/json' }),
     if (event.type === 'charge:confirmed') {
       // TODO
       // all good, charge confirmed
+      //new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+      // await mongoose
+      //   .model('User')
+      //   .findOneAndUpdate({ email }, { $set: updateDoc }, { new: true, upsert: true, runValidators: true })
+      //   .lean();
     }
 
     if (event.type === 'charge:failed') {
@@ -172,6 +177,7 @@ router.post('/coinbase-notification', express.raw({ type: 'application/json' }),
 
     res.status(200).send(`success ${event.id}`);
   } catch (error) {
+    console.error(error);
     res.status(400).send('failure!');
   }
 });
