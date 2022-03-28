@@ -3,6 +3,7 @@ import { getToken } from 'next-auth/jwt';
 import { Client, resources, Webhook } from 'coinbase-commerce-node';
 import controller from './controller';
 import { encrypt } from './utils';
+import rootLogger from './lib/logger';
 
 Client.init('5a66701a-9784-4274-be6f-4fc947215a71');
 const { Charge } = resources;
@@ -148,8 +149,11 @@ router.get('/api/createCharge', async (req, res, next) => {
 });
 
 router.post('/api/coinbase-notification', async (req, res) => {
-  const rawBody = req.body;
+  const logger = rootLogger.child({ module: 'coinbase-notification' });
+  const rawBody = req.body.toString();
   console.log('rawBody', rawBody);
+  console.log('req.body', req.body);
+  logger.info('rawBody', rawBody);
 
   const signature = req.headers['x-cc-webhook-signature'] || '';
   const webhookSecret = 'b17d23ee-40da-4201-ada5-f77a016c0d57';
