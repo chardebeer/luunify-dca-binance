@@ -148,48 +148,40 @@ router.get('/api/createCharge', async (req, res, next) => {
   }
 });
 
-router.post(
-  '/coinbase-notification',
-  express.json({
-    verify: (req, _, buf) => {
-      (req as any).rawBody = buf;
-    },
-  }),
-  async (req, res) => {
-    const signature = req.headers['x-cc-webhook-signature'] || '';
-    const rawBody = (req as any).rawBody;
-    console.log('raw.body,', rawBody);
-    try {
-      const event = Webhook.verifyEventBody(rawBody, signature as string, process.env.WEBHOOK_SECRET as string);
-      console.log('e', JSON.stringify(event));
+router.post('/coinbase-notification', express.raw(), async (req, res) => {
+  const signature = req.headers['x-cc-webhook-signature'] || '';
+  const rawBody = Buffer.from(req.body).toString();
+  console.log('rawBody.body,', rawBody);
+  try {
+    const event = Webhook.verifyEventBody(rawBody, signature as string, process.env.WEBHOOK_SECRET as string);
+    console.log('e', JSON.stringify(event));
 
-      if (event.type === 'charge:pending') {
-        // TODO
-        // user paid, but transaction not confirm on blockchain yet
-      }
-
-      if (event.type === 'charge:confirmed') {
-        // TODO
-        // all good, charge confirmed
-        //new Date(new Date().setFullYear(new Date().getFullYear() + 1))
-        // await mongoose
-        //   .model('User')
-        //   .findOneAndUpdate({ email }, { $set: updateDoc }, { new: true, upsert: true, runValidators: true })
-        //   .lean();
-      }
-
-      if (event.type === 'charge:failed') {
-        // TODO
-        // charge failed or expired
-      }
-
-      res.status(200).send(`success ${event.id}`);
-    } catch (error) {
-      console.error(error);
-      res.status(400).send('failure!');
+    if (event.type === 'charge:pending') {
+      // TODO
+      // user paid, but transaction not confirm on blockchain yet
     }
+
+    if (event.type === 'charge:confirmed') {
+      // TODO
+      // all good, charge confirmed
+      //new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+      // await mongoose
+      //   .model('User')
+      //   .findOneAndUpdate({ email }, { $set: updateDoc }, { new: true, upsert: true, runValidators: true })
+      //   .lean();
+    }
+
+    if (event.type === 'charge:failed') {
+      // TODO
+      // charge failed or expired
+    }
+
+    res.status(200).send(`success ${event.id}`);
+  } catch (error) {
+    console.error(error);
+    res.status(400).send('failure!');
   }
-);
+});
 
 export default router;
 
