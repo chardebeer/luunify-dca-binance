@@ -83,6 +83,7 @@
     "joi": "^17.4.2",
     "lodash.debounce": "^4.0.8",
     "markdown-escape": "^1.1.0",
+    "micro": "^9.3.4",
     "moment-timezone": "^0.5.33",
     "mongodb": "^4.1.1",
     "mongoose": "^6.2.6",
