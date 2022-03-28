@@ -1,8 +1,6 @@
 import { Router } from 'express';
-import { Request } from 'express-serve-static-core';
 import { getToken } from 'next-auth/jwt';
 import { Client, resources, Webhook } from 'coinbase-commerce-node';
-import { ParsedQs } from 'qs';
 import controller from './controller';
 import { encrypt } from './utils';
 
@@ -183,7 +181,7 @@ router.post('/api/coinbase-notification', async (req, res) => {
 
 export default router;
 
-async function getApiKeysFromToken(req: Request<Record<string, string>, any, any, ParsedQs, Record<string, any>>) {
+async function getApiKeysFromToken(req: any) {
   const { email, apiKey, apiSecret } = (await getToken({ req })) as {
     email?: string;
     apiKey?: string;
