@@ -46,6 +46,8 @@ export default model(
         },
       },
     },
+
+    subscriptionUntil: Date,
   })
 );
 

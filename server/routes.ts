@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { getToken } from 'next-auth/jwt';
-import { ChargeResource, Client, resources, Webhook } from 'coinbase-commerce-node';
+import { Client, resources, Webhook } from 'coinbase-commerce-node';
 import controller from './controller';
 import { encrypt } from './utils';
 import express from 'express';

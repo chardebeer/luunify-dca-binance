@@ -42,4 +42,5 @@ export type User = {
   binance: { update: boolean; apiKey?: string; apiSecret?: string };
   telegram: { enabled: boolean; chatId: string; botToken: string };
   timezone: string;
+  subscriptionUntil?: Date;
 } & DefaultSession['user'];
