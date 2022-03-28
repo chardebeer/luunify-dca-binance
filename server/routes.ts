@@ -149,7 +149,7 @@ router.get('/api/createCharge', async (req, res, next) => {
   }
 });
 
-router.post('/coinbase-notification', express.raw(), async (req, res) => {
+router.post('/coinbase-notification', express.raw({ type: 'application.json' }), async (req, res) => {
   const signature = req.headers['x-cc-webhook-signature'] || '';
   const buf = await buffer(req);
 
