@@ -6,7 +6,7 @@ import client from 'server/lib/mongoClient';
 import mongoose from 'mongoose';
 import { User } from 'types';
 import { decrypt, encrypt } from 'server/utils';
-console.log('process.env.SENDGRID_API_KEY', process.env.SENDGRID_API_KEY);
+
 export default NextAuth({
   session: {
     strategy: 'jwt',
