@@ -133,6 +133,7 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
               btnRef.current.disabled = false;
             }
           }
+
           return (
             <form role="form" id="settings" onSubmit={handleSubmit}>
               <Stack spacing={4}>
@@ -374,7 +375,7 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
                     borderRadius="2xl"
                     boxShadow="xl"
                     isLoading={!paymentUrl.length}
-                    onClick={() => (window.location.href = paymentUrl)}
+                    onClick={() => window.open(paymentUrl, '_blank')?.focus()}
                   >
                     Pay Subscription
                   </Button>
