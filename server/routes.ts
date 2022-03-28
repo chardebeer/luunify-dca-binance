@@ -3,7 +3,6 @@ import { getToken } from 'next-auth/jwt';
 import { Client, resources, Webhook } from 'coinbase-commerce-node';
 import controller from './controller';
 import { encrypt } from './utils';
-import express from 'express';
 
 Client.init('5a66701a-9784-4274-be6f-4fc947215a71');
 const { Charge } = resources;
@@ -148,12 +147,29 @@ router.get('/api/createCharge', async (req, res, next) => {
   }
 });
 
-router.post('/coinbase-notification', express.raw(), async (req, res) => {
+function rawBody(req: any, _: any, next: any) {
+  req.setEncoding('utf8');
+
+  let data = '';
+
+  req.on('data', function (chunk) {
+    data += chunk;
+  });
+
+  req.on('end', function () {
+    req.rawBody = data;
+
+    next();
+  });
+}
+
+router.use(rawBody).post('/coinbase-notification', async (req, res) => {
   const signature = req.headers['x-cc-webhook-signature'] || '';
-  const rawBody = Buffer.from(req.body).toString();
-  console.log('rawBody.body,', rawBody);
+  const raw = (req as any).rawBody;
+  console.log('raw2', raw);
+
   try {
-    const event = Webhook.verifyEventBody(rawBody, signature as string, process.env.WEBHOOK_SECRET as string);
+    const event = Webhook.verifyEventBody(raw, signature as string, process.env.WEBHOOK_SECRET as string);
     console.log('e', JSON.stringify(event));
 
     if (event.type === 'charge:pending') {
