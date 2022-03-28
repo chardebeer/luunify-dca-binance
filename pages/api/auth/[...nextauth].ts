@@ -6,7 +6,7 @@ import client from 'server/lib/mongoClient';
 import mongoose from 'mongoose';
 import { User } from 'types';
 import { decrypt, encrypt } from 'server/utils';
-
+console.log('process.env.SENDGRID_API_KEY', process.env.SENDGRID_API_KEY);
 export default NextAuth({
   session: {
     strategy: 'jwt',
@@ -24,8 +24,9 @@ export default NextAuth({
         port: Number(process.env.EMAIL_SERVER_PORT),
         auth: {
           user: process.env.EMAIL_SERVER_USER,
-          pass: process.env.EMAIL_SERVER_PASSWORD,
+          pass: process.env.SENDGRID_API_KEY,
         },
+        authMethod: 'plain',
       },
       from: process.env.EMAIL_FROM,
       async sendVerificationRequest({ identifier: email, url, provider: { server, from } }) {

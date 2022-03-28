@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { getCsrfToken, signIn } from 'next-auth/react';
-import { CtxOrReq } from 'next-auth/client/_utils';
+import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
@@ -46,11 +45,7 @@ const Btn = styled.button`
   }
 `;
 
-interface Props {
-  csrfToken?: string;
-}
-
-export default function SignIn({ csrfToken }: Props) {
+export default function SignIn() {
   const { callbackUrl } = useRouter().query;
   const [email, setEmail] = useState('');
 
@@ -58,7 +53,6 @@ export default function SignIn({ csrfToken }: Props) {
     <SignInPage>
       <Title> Please enter your email address.</Title>
       <div>
-        <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
         <input
           type="email"
           name="email"
@@ -70,11 +64,4 @@ export default function SignIn({ csrfToken }: Props) {
       </div>
     </SignInPage>
   );
-}
-
-export async function getServerSideProps(context: CtxOrReq | undefined) {
-  const csrfToken = await getCsrfToken(context);
-  return {
-    props: { csrfToken },
-  };
 }
