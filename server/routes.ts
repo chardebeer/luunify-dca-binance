@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { getToken } from 'next-auth/jwt';
-import { Client, resources, Webhook } from 'coinbase-commerce-node';
+import { Client, resources } from 'coinbase-commerce-node';
 import controller from './controller';
 import { encrypt } from './utils';
 
@@ -34,7 +34,6 @@ router.patch('/api/settings/general', async (req, res, next) => {
   try {
     if (req.headers.authorization?.startsWith('Basic ')) {
       const apiKeys = getApiKeysFromHeader(req.headers.authorization);
-
       req.body.binance.apiKey = apiKeys[0];
       req.body.binance.apiSecret = apiKeys[1];
     }
@@ -144,44 +143,6 @@ router.get('/api/createCharge', async (req, res, next) => {
     res.status(200).json(await Charge.create(chargeData as any));
   } catch (err) {
     next(err);
-  }
-});
-
-router.post('/coinbase-notification', async (req, res) => {
-  const signature = req.headers['x-cc-webhook-signature'] || '';
-
-  try {
-    const event = Webhook.verifyEventBody(
-      (req as any).rawBody,
-      signature as string,
-      process.env.WEBHOOK_SECRET as string
-    );
-    console.log('e', JSON.stringify(event));
-
-    if (event.type === 'charge:pending') {
-      // TODO
-      // user paid, but transaction not confirm on blockchain yet
-    }
-
-    if (event.type === 'charge:confirmed') {
-      // TODO
-      // all good, charge confirmed
-      //new Date(new Date().setFullYear(new Date().getFullYear() + 1))
-      // await mongoose
-      //   .model('User')
-      //   .findOneAndUpdate({ email }, { $set: updateDoc }, { new: true, upsert: true, runValidators: true })
-      //   .lean();
-    }
-
-    if (event.type === 'charge:failed') {
-      // TODO
-      // charge failed or expired
-    }
-
-    res.status(200).send(`success ${event.id}`);
-  } catch (error) {
-    console.error(error);
-    res.status(400).send('failure!');
   }
 });
 

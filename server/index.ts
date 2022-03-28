@@ -34,23 +34,6 @@ const logger = rootLogger.child({ module: 'app' });
       res.end();
     });
 
-    app.use((req, _, next) => {
-      if (req.url.startsWith('/coinbase-notification')) {
-        let data = '';
-
-        req.on('data', function (chunk) {
-          data += chunk;
-        });
-
-        req.on('end', function () {
-          (req as any).rawBody = data;
-          next();
-        });
-      } else {
-        next();
-      }
-    });
-
     await mongoose.connect(MONGODB_URI);
 
     // @ts-ignore
