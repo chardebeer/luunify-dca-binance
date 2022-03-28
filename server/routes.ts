@@ -157,13 +157,10 @@ router.post(
   }),
   async (req, res) => {
     const signature = req.headers['x-cc-webhook-signature'] || '';
-    console.log('req.body,', req.body);
+    const rawBody = (req as any).rawBody;
+    console.log('raw.body,', rawBody);
     try {
-      const event = Webhook.verifyEventBody(
-        (req as any).rawBody,
-        signature as string,
-        process.env.WEBHOOK_SECRET as string
-      );
+      const event = Webhook.verifyEventBody(rawBody, signature as string, process.env.WEBHOOK_SECRET as string);
       console.log('e', JSON.stringify(event));
 
       if (event.type === 'charge:pending') {
