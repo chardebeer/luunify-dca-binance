@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
@@ -46,8 +46,25 @@ const Btn = styled.button`
 `;
 
 export default function SignIn() {
-  const { callbackUrl } = useRouter().query;
+  const router = useRouter();
+  const { callbackUrl } = router.query;
   const [email, setEmail] = useState('');
+
+  useEffect(() => {
+    const handleRouteChangeError = (err, url) => {
+      if (err) {
+        console.log('errerr', err);
+      }
+    };
+
+    router.events.on('routeChangeError', handleRouteChangeError);
+
+    // If the component is unmounted, unsubscribe
+    // from the event with the `off` method:
+    return () => {
+      router.events.off('routeChangeError', handleRouteChangeError);
+    };
+  }, []);
 
   return (
     <SignInPage>

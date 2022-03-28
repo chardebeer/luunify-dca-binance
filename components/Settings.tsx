@@ -42,7 +42,7 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
 
   useEffect(() => {
     async function createCharge() {
-      const res = await fetch('http://localhost:3000/api/createCharge?email=' + initialValues.email);
+      const res = await fetch('/api/createCharge?email=' + initialValues.email);
       const data = await res.json();
 
       setPaymentUrl(data.hosted_url);
