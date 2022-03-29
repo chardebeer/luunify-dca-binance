@@ -7,10 +7,16 @@ import Jobs from '../components/Jobs';
 import Portfolio from '../components/Portfolio';
 import Settings from '../components/Settings';
 import styled from 'styled-components';
+import GlobalStyles from 'styles/GlobalStyles';
+import Link from 'next/link';
+import StyledLogo from '../styles/Logo.style';
+import StyledButton from 'styles/Button.style';
 
-const SignInPage = styled.div`
+const HomeContainer = styled.div`
   overflow: hidden;
-  background: black;
+  background: linear-gradient(180deg, rgba(94, 93, 93, 1) 0%, rgba(0, 0, 0, 1) 100%);
+  color: #ffffff;
+  padding: 20px;
   align-content: center;
   justify-items: center;
   justify-content: center;
@@ -25,7 +31,6 @@ const Title = styled.h1`
   color: #fff;
   font-weight: 600;
   font-size: 3rem;
-  font-family: sans-serif;
 `;
 
 const Btn = styled.button`
@@ -81,15 +86,19 @@ export default function Index() {
 
   if (!session?.user) {
     return (
-      <SignInPage>
+      <HomeContainer>
+        <GlobalStyles />
+        <StyledLogo />
         <Title>Welcome to Muunbot</Title>
         <br />
         <SubText>Please sign in or sign up to continue</SubText>
-        <Btn onClick={() => signIn()} style={{ backgroundColor: 'lightGray' }}>
-          Sign in
-        </Btn>
+        <StyledButton buttonLabel="Sign In" onClick={() => signIn()} />
+        <Link href="/signupform">
+          <StyledButton buttonLabel="Sign up" />
+        </Link>
+
         {/* <button onClick={() => signUp()}>Sign up</button> */}
-      </SignInPage>
+      </HomeContainer>
     );
   }
 

@@ -22,6 +22,7 @@
     "resolveJsonModule": true,
     "noImplicitAny": false
   },
-  "include": ["next-env.d.ts", "additional.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "additional.d.ts", "*, */*.ts", "**/*.tsx"],
   "exclude": ["dist", ".next", "next.config.js", "**/*.spec.ts"]
 }
+//"components/icons/ContactsIcon.tsx"
