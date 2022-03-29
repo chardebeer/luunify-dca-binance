@@ -11,7 +11,7 @@ export default model(
       trim: true,
       lowercase: true,
       unique: true,
-      isReuries: [true, 'Email address is required'],
+      isRequried: [true, 'Email address is required'],
       validate: [validateEmail, 'Please fill a valid email address'],
       match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address'],
     },
