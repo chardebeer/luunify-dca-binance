@@ -124,42 +124,41 @@ router.patch('/api/orders/:orderId', async (req, res, next) => {
 router.get('/api/createCharge', async (req, res, next) => {
   if (!process.env.COINBASE_API_KEY) {
     res.status(500).json({ error: 'COINBASE_API_KEY required in env' });
-    return;
-  }
-
-  const chargeData = {
-    name: 'Muunbot',
-    description: 'Muunbot subscription',
-    local_price: {
-      amount: 10.0,
-      currency: 'USD',
-    },
-    pricing_type: 'fixed_price',
-    metadata: {
-      email: req.query.email,
-    },
-  };
-
-  try {
-    const cbRes = await fetch('https://api.commerce.coinbase.com/charges/', {
-      method: 'POST',
-      body: JSON.stringify(chargeData),
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CC-Api-Key': process.env.COINBASE_API_KEY,
-        'X-CC-Version': '2018-03-22',
+  } else {
+    const chargeData = {
+      name: 'Muunbot',
+      description: 'Muunbot subscription',
+      local_price: {
+        amount: 10.0,
+        currency: 'USD',
       },
-    });
+      pricing_type: 'fixed_price',
+      metadata: {
+        email: req.query.email,
+      },
+    };
 
-    const json = await cbRes.json();
+    try {
+      const cbRes = await fetch('https://api.commerce.coinbase.com/charges/', {
+        method: 'POST',
+        body: JSON.stringify(chargeData),
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CC-Api-Key': process.env.COINBASE_API_KEY,
+          'X-CC-Version': '2018-03-22',
+        },
+      });
 
-    if (!cbRes.ok || !json.data) {
-      res.status(cbRes.status).json(json.error || cbRes.statusText);
-    } else {
-      res.status(200).json(json.data);
+      const json = await cbRes.json();
+
+      if (!cbRes.ok || !json.data) {
+        res.status(cbRes.status).json(json.error || cbRes.statusText);
+      } else {
+        res.status(200).json(json.data);
+      }
+    } catch (err) {
+      next(err);
     }
-  } catch (err) {
-    next(err);
   }
 });
 
