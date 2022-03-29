@@ -1,11 +1,7 @@
 import { Router } from 'express';
 import { getToken } from 'next-auth/jwt';
-import { Client, resources } from 'coinbase-commerce-node';
 import controller from './controller';
 import { encrypt } from './utils';
-
-Client.init('5a66701a-9784-4274-be6f-4fc947215a71');
-const { Charge } = resources;
 
 const router = Router();
 
@@ -139,8 +135,18 @@ router.get('/api/createCharge', async (req, res, next) => {
     },
   };
 
+  const cbRes = await fetch('https://api.commerce.coinbase.com/charges/', {
+    method: 'POST',
+    body: JSON.stringify(chargeData),
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CC-Api-Key': process.env.COINBASE_API_KEY || '',
+      'X-CC-Version': '2018-03-22',
+    },
+  });
+
   try {
-    res.status(200).json(await Charge.create(chargeData as any));
+    res.status(200).json(await cbRes.json());
   } catch (err) {
     next(err);
   }
