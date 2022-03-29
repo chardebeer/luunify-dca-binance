@@ -120,12 +120,12 @@ export function flattenObject(object: { [key: string]: any } = {}) {
   return document;
 }
 
-export function encrypt(decrypted: string) {
+export function encrypt(str: string) {
   if (!process.env.ENCRYPTION_KEY) throw new Error('ENCRYPTION_KEY required in env');
-  return CryptoJS.AES.encrypt(decrypted, process.env.ENCRYPTION_KEY).toString();
+  return CryptoJS.AES.encrypt(JSON.stringify({ str }), process.env.ENCRYPTION_KEY).toString();
 }
 
-export function decrypt(encrypted: string) {
+export function decrypt(str: string) {
   if (!process.env.ENCRYPTION_KEY) throw new Error('ENCRYPTION_KEY required in env');
-  return CryptoJS.AES.decrypt(encrypted, process.env.ENCRYPTION_KEY).toString(CryptoJS.enc.Utf8);
+  return CryptoJS.AES.decrypt(str.toString(), process.env.ENCRYPTION_KEY).toString(CryptoJS.enc.Utf8);
 }

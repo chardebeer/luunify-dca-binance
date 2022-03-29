@@ -122,6 +122,11 @@ router.patch('/api/orders/:orderId', async (req, res, next) => {
 });
 
 router.get('/api/createCharge', async (req, res, next) => {
+  if (!process.env.COINBASE_API_KEY) {
+    res.status(500).json({ error: 'COINBASE_API_KEY required in env' });
+    return;
+  }
+
   const chargeData = {
     name: 'Muunbot',
     description: 'Muunbot subscription',
@@ -141,13 +146,18 @@ router.get('/api/createCharge', async (req, res, next) => {
       body: JSON.stringify(chargeData),
       headers: {
         'Content-Type': 'application/json',
-        'X-CC-Api-Key': process.env.COINBASE_API_KEY || '',
+        'X-CC-Api-Key': process.env.COINBASE_API_KEY,
         'X-CC-Version': '2018-03-22',
       },
     });
 
-    const { data } = await cbRes.json();
-    res.status(200).json(data);
+    const json = await cbRes.json();
+
+    if (!cbRes.ok || !json.data) {
+      res.status(cbRes.status).json(json.error || cbRes.statusText);
+    } else {
+      res.status(200).json(json.data);
+    }
   } catch (err) {
     next(err);
   }
