@@ -48,7 +48,7 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
       setPaymentUrl(data.hosted_url);
     }
 
-    !paymentUrl.length && createCharge();
+    !paymentUrl?.length && createCharge();
   }, []);
 
   const onSubmit = async (values: User) => {
