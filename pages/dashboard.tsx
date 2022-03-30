@@ -4,7 +4,7 @@ import GlobalStyles from '../styles/GlobalStyles';
 import DashBoardHeader from '../components/DashBoardHeader';
 import StyledDashBoardContainer from '../styles/DashBoardContainer.style';
 import StyledTopNav from '../styles/TopNav.style';
-//import { StyledBalanceModal } from "../components/styles/BalanceModal.style";
+import StyledBalanceModal from '../styles/BalanceModal.style';
 //import { StyledGraphModal } from "../components/styles/GraphModal.style";
 //import { StyledPortfolioBreakDownModal } from "../components/styles/PortfolioBreakDownModal.style";
 //import { StyledNewsFeedModal } from "../components/styles/NewsFeedModal.style";
@@ -17,6 +17,7 @@ export default function Confirmationpopup() {
       <StyledSideNav />
       <StyledTopNav />
       <DashBoardHeader headerText={'DashBoard'} />
+      <StyledBalanceModal modalValue={21.836} modalHeading={'Balance'} modalText={'1 Bit = $32,35'} />
     </StyledDashBoardContainer>
   );
 }
@@ -28,6 +29,10 @@ headerText={"Balance"}
 walletTotal={"₿ 21.836"}
 bitValue={"1 bit = $32,35"}
 />
+modalHeading: string;
+  className?: string;
+  modalText: string;
+  modalValue: number;
 <StyledGraphModal
 headerText={"Graph"}
 graphX={"x value"}

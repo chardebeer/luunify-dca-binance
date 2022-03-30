@@ -11,7 +11,6 @@ const StyledSideNav = styled(SideNav)`
   transition: 0.5s ease;
   overflow-x: hidden;
   padding-top: 30px;
-
   display: flex;
   flex-direction: column;
   align-items: center;

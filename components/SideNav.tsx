@@ -16,7 +16,7 @@ type Props = {
 
 function SideNav({ className, fill }: Props) {
   return (
-    <div className={className}>
+    <div style={{ display: 'block' }} className={className}>
       <Logo />
       <StyledSideNavButton>
         <WalletsIcon fill={fill} />
