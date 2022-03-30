@@ -127,7 +127,7 @@ router.get('/api/createCharge', async (req, res, next) => {
   } else {
     const chargeData = {
       name: 'Muunbot',
-      description: 'Muunbot subscription',
+      description: 'Muunbot dca subscription',
       local_price: {
         amount: 10.0,
         currency: 'USD',
@@ -135,6 +135,7 @@ router.get('/api/createCharge', async (req, res, next) => {
       pricing_type: 'fixed_price',
       metadata: {
         email: req.query.email,
+        subscription: req.query.subscription,
       },
     };
 

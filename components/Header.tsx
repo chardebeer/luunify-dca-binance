@@ -1,4 +1,4 @@
-import { HamburgerIcon, SettingsIcon } from '@chakra-ui/icons';
+import { HamburgerIcon, SettingsIcon, MoonIcon } from '@chakra-ui/icons';
 import { MdLogout } from 'react-icons/md';
 import { Flex, Icon, IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import React from 'react';
@@ -7,9 +7,10 @@ import { signOut } from 'next-auth/react';
 
 type Props = {
   onGlobalSettingsClick: () => void;
+  onSubscriptionsClick: () => void;
 };
 
-export default function Header({ onGlobalSettingsClick }: Props) {
+export default function Header({ onGlobalSettingsClick, onSubscriptionsClick }: Props) {
   return (
     <Flex
       align="center"
@@ -36,6 +37,9 @@ export default function Header({ onGlobalSettingsClick }: Props) {
         <MenuList>
           <MenuItem icon={<SettingsIcon />} onClick={onGlobalSettingsClick}>
             General settings
+          </MenuItem>
+          <MenuItem icon={<MoonIcon />} onClick={onSubscriptionsClick}>
+            Subscriptions
           </MenuItem>
           <MenuItem icon={<Icon as={MdLogout} />} onClick={() => signOut()}>
             Logout

@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   FormControl,
   FormLabel,
   Icon,
@@ -15,7 +14,7 @@ import {
 import { diff } from 'deep-object-diff';
 import debounce from 'lodash.debounce';
 import { encode } from 'base-64';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Field, Form } from 'react-final-form';
 import { FaTelegramPlane } from 'react-icons/fa';
 import { SiBinance } from 'react-icons/si';
@@ -33,23 +32,11 @@ type Props = {
 
 export default function Settings({ onClose, initialValues, isOpen }: Props) {
   const [isLoading, setIsLoading] = useState(false);
-  const [paymentUrl, setPaymentUrl] = useState('');
   const btnRef = useRef<HTMLButtonElement>(null);
 
   const loadTimezones = debounce((input, cb) => {
     getTimezones(input).then((timezones) => cb(timezones));
   }, 700);
-
-  useEffect(() => {
-    async function createCharge() {
-      const res = await fetch('/api/createCharge?email=' + initialValues.email);
-      const data = await res.json();
-
-      setPaymentUrl(data.hosted_url);
-    }
-
-    !paymentUrl?.length && createCharge();
-  }, []);
 
   const onSubmit = async (values: User) => {
     try {
@@ -98,14 +85,10 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
 
   return (
     <Overlay
-      isLoading={isLoading || !paymentUrl.length}
+      isLoading={isLoading}
       isOpen={isOpen}
       formId="settings"
-      onClose={() => {
-        if (!isLoading || !paymentUrl.length) {
-          onClose();
-        }
-      }}
+      onClose={() => !isLoading && onClose()}
       ref={btnRef}
       subTitle="Edit your global timezone and notification settings here."
       title="Settings"
@@ -127,11 +110,7 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
       >
         {({ form, handleSubmit, pristine, values }) => {
           if (btnRef.current) {
-            if (pristine) {
-              btnRef.current.disabled = true;
-            } else {
-              btnRef.current.disabled = false;
-            }
+            btnRef.current.disabled = pristine;
           }
 
           return (
@@ -366,19 +345,6 @@ export default function Settings({ onClose, initialValues, isOpen }: Props) {
                       </Text>
                     )}
                   </Field>
-                </Box>
-
-                <Box display="flex" justifyContent="center" alignItems="center" mt="16px">
-                  <Button
-                    bgImage="linear-gradient(to right, #77a1d3 0%, #79cbca 51%, #77a1d3 100%)"
-                    textColor="white"
-                    borderRadius="2xl"
-                    boxShadow="xl"
-                    isLoading={!paymentUrl.length}
-                    onClick={() => window.open(paymentUrl, '_blank')?.focus()}
-                  >
-                    Pay Subscription
-                  </Button>
                 </Box>
               </Stack>
             </form>

@@ -6,6 +6,7 @@ import Header from '../components/Header';
 import Jobs from '../components/Jobs';
 import Portfolio from '../components/Portfolio';
 import Settings from '../components/Settings';
+import Subscriptions from '../components/Subscriptions';
 import styled from 'styled-components';
 
 const SignInPage = styled.div`
@@ -75,11 +76,13 @@ const Container = styled.div`
 
 export default function Index() {
   const { data: session, status } = useSession();
+  const { user } = session || {};
   const [isGeneralSettingsOpen, setIsGeneralSettingsOpen] = useState(false);
+  const [isSubscriptionsOpen, setIsSubscriptionsOpen] = useState(false);
 
   if (status === 'loading') return <p>Loading...</p>;
 
-  if (!session?.user) {
+  if (!user) {
     return (
       <SignInPage>
         <Title>Welcome to Muunbot</Title>
@@ -105,29 +108,42 @@ export default function Index() {
         py={[2, 5]}
       >
         <Portfolio />
-        <Jobs defaultTimezone={session?.user.timezone || ''} />
+        <Jobs defaultTimezone={user.timezone || ''} />
       </Box>
     );
   }
+  // new Date(new Date().setFullYear(new Date().getFullYear() + 1))
 
   return (
     <ErrorBoundary>
-      <Header onGlobalSettingsClick={() => setIsGeneralSettingsOpen(true)} />
+      <Header
+        onGlobalSettingsClick={() => setIsGeneralSettingsOpen(true)}
+        onSubscriptionsClick={() => setIsSubscriptionsOpen(true)}
+      />
       <Container>
-        {session?.user.binance?.apiKey && session?.user.binance?.apiSecret ? (
+        {user.binance?.apiKey && user.binance?.apiSecret && user.subscriptionUntil >= new Date() ? (
           renderContent()
         ) : (
           <Box>
-            <MessageText>Please add binance api keys in settings to continue</MessageText>
+            <Box>
+              <MessageText>Binance api keys required</MessageText>
+            </Box>
+            <Box>
+              <MessageText>Subscription required</MessageText>
+            </Box>
           </Box>
         )}
-        {/* <Footer /> */}
+
         {isGeneralSettingsOpen && (
           <Settings
-            initialValues={session.user}
+            initialValues={user}
             isOpen={isGeneralSettingsOpen}
             onClose={() => setIsGeneralSettingsOpen(false)}
           />
+        )}
+
+        {isSubscriptionsOpen && (
+          <Subscriptions user={user} isOpen={isSubscriptionsOpen} onClose={() => setIsSubscriptionsOpen(false)} />
         )}
       </Container>
     </ErrorBoundary>
