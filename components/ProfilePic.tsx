@@ -1,7 +1,14 @@
-import Image from 'next/image';
 import React from 'react';
-import iconsrc from '../public/profilepic.jpg';
+import { Avatar } from '@chakra-ui/react';
 
-export default function ProfilePic() {
-  return <Image alt="User Profile Pic" src={iconsrc} />;
+type Props = {
+  className?: string;
+  src: string;
+  name: string;
+};
+
+function ProfilePic({ name, src, className }: Props) {
+  return <Avatar name={name} src={src} className={className} />;
 }
+
+export default ProfilePic;

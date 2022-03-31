@@ -6,18 +6,7 @@ import ChatIcon from './icons/ChatIcon';
 import SearchBar from './SearchBar';
 import ProfilePic from './ProfilePic';
 import { BsChevronDown } from 'react-icons/bs';
-
-const StyledProfilePic = styled(ProfilePic)`
-  height: 10px;
-  width: 10px;
-  border-radius: 50px;
-`;
-
-const StyledProfilePicContainer = styled.div`
-  width: 30px;
-  border-radius: 50px;
-  overflow: hidden;
-`;
+import iconsrc from '../public/ProfilePic.jpg';
 
 const StyledButton = styled.button`
   border-radius: 50%;
@@ -43,10 +32,10 @@ function TopNav({ className }: Props) {
       <CalendarIcon />
       <ActivityIcon />
       <ChatIcon />
-      <StyledProfilePicContainer>
-        <StyledProfilePic />
-      </StyledProfilePicContainer>
-      <BsChevronDown size={15} />
+      <ProfilePic src={iconsrc} alt={'profile pic'} />
+      <button>
+        <BsChevronDown size={15} />
+      </button>
       <span>|</span>
       <StyledButton>+</StyledButton>
     </div>

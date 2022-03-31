@@ -5,19 +5,27 @@ import DashBoardHeader from '../components/DashBoardHeader';
 import StyledDashBoardContainer from '../styles/DashBoardContainer.style';
 import StyledTopNav from '../styles/TopNav.style';
 import StyledBalanceModal from '../styles/BalanceModal.style';
+import GraphModal from 'components/GraphModal';
 //import { StyledGraphModal } from "../components/styles/GraphModal.style";
 //import { StyledPortfolioBreakDownModal } from "../components/styles/PortfolioBreakDownModal.style";
 //import { StyledNewsFeedModal } from "../components/styles/NewsFeedModal.style";
+import StyledDashBoardModal from '../styles/DashBoardModal.style';
+import PieChartModal from 'components/PieChartModal';
 
 export default function Confirmationpopup() {
   return (
     <StyledDashBoardContainer>
       <GlobalStyles />
-
       <StyledSideNav />
       <StyledTopNav />
       <DashBoardHeader headerText={'DashBoard'} />
       <StyledBalanceModal modalValue={21.836} modalHeading={'Balance'} modalText={'1 Bit = $32,35'} />
+      <StyledDashBoardModal modalHeading={'Graph'}>
+        <GraphModal />
+      </StyledDashBoardModal>
+      <StyledDashBoardModal modalHeading={'Portfolio Breakdown'}>
+        <PieChartModal />
+      </StyledDashBoardModal>
     </StyledDashBoardContainer>
   );
 }

@@ -100,6 +100,7 @@
     "react-select": "^4.3.1",
     "react-time-picker": "^4.5.0",
     "react-tiny-virtual-list": "^2.2.0",
+    "recharts": "^2.1.9",
     "styled-components": "^5.3.3"
   },
   "engines": {
