@@ -10,7 +10,6 @@ const data = [
     name: '9am',
     uv: 50,
     amt: 2400,
-    symbol: '$',
   },
   {
     name: '10am',
