@@ -10,6 +10,7 @@ const data = [
     name: '9am',
     uv: 50,
     amt: 2400,
+    symbol: '$',
   },
   {
     name: '10am',
@@ -65,7 +66,7 @@ function GraphModal({ className }: Props) {
         </defs>
         <CartesianGrid vertical={false} />
         <XAxis dataKey="name" />
-        <YAxis />
+        <YAxis tickFormatter="$" />
         <Tooltip />
         <Area type="monotone" dataKey={'uv'} stroke="#8884d8" fillOpacity={1} fill="url(#colorUv)" />
       </AreaChart>
