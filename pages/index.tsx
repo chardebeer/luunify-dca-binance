@@ -91,7 +91,7 @@ export default function Index() {
         <StyledLogo />
         <Title>Welcome to Muunbot</Title>
         <br />
-        <SubText>Please sign in or sign up to continue</SubText>
+        <SubText>Please Sign in or Sign up to continue</SubText>
         <StyledButton buttonLabel="Sign In" onClick={() => signIn()} />
         <Link href="/signupform">
           <StyledButton buttonLabel="Sign up" />
