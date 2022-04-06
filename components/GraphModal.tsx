@@ -66,7 +66,7 @@ function GraphModal({ className }: Props) {
         </defs>
         <CartesianGrid vertical={false} />
         <XAxis dataKey="name" />
-        <YAxis tickFormatter="$" />
+        <YAxis />
         <Tooltip />
         <Area type="monotone" dataKey={'uv'} stroke="#8884d8" fillOpacity={1} fill="url(#colorUv)" />
       </AreaChart>
