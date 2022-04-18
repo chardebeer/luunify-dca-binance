@@ -3282,16 +3282,6 @@ crypto-browserify@3.12.0, crypto-browserify@^3.11.0:
     randombytes "^2.0.0"
     randomfill "^1.0.3"
 
-crypto-icons-plus-32@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/crypto-icons-plus-32/-/crypto-icons-plus-32-1.0.1.tgz#ef669452a1ddb4ffc9d882a8f871215253583cd1"
-  integrity sha512-+m/KeWwt18Clh0+r530k4FvmFeLZFsP/tKZ21ghzoYl1ZJ/rKCmYZmJgkUirg73jlBofnp/TTOBrIWBcSRvgTA==
-
-crypto-icons-plus@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/crypto-icons-plus/-/crypto-icons-plus-1.0.1.tgz#3c0c135e8a40e5116ad39a8bbe242b5eec1311b4"
-  integrity sha512-IcgUUuCinyzPRmJAsVxfCswvIfjx2BbEiM6MegYw/RI8Jxejz5FaVdn+gDwK+nNXMcixq8TdLYWe2AisW0d4Rg==
-
 crypto-js@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-4.1.1.tgz#9e485bcf03521041bd85844786b83fb7619736cf"

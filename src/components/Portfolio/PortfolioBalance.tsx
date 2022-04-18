@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import iconsInfo from 'node_modules/crypto-icons-plus/manifest.min.json';
+import iconsInfo from 'crypto-icons-manifest.min.json';
 import { Text, Flex, Spinner } from '@chakra-ui/react';
 import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import StyledDashBoardBox from 'src/styles/DashBoardBox.style';
@@ -18,9 +18,7 @@ function PortfolioBalance({ asset, onNext, onPrevious, isLoading }: Props) {
   const prevPrice = usePrevious<number>(asset.price);
 
   function getIcon() {
-    return require(`../../../node_modules/crypto-icons-plus-32/src/${
-      iconsInfo.find(({ symbol }) => symbol === asset.symbol)?.slug
-    }.png`);
+    return require(`../../../public/crypto-icons/${iconsInfo.find(({ symbol }) => symbol === asset.symbol)?.slug}.png`);
   }
 
   function getValue(): string {
