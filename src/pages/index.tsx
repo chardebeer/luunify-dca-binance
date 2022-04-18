@@ -2,7 +2,6 @@ import { Box } from '@chakra-ui/react';
 import { useSession } from 'next-auth/react';
 import React, { useState } from 'react';
 import ErrorBoundary from 'src/components/ErrorBoundary';
-import Header from 'src/components/Header';
 import Jobs from 'src/components/Jobs';
 import Portfolio from 'src/components/Portfolio';
 import Settings from 'src/components/Settings';

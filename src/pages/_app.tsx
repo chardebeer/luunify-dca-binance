@@ -15,6 +15,7 @@ export default function App({ Component, pageProps: { session, ...pageProps }, e
       </Head>
       <SessionProvider session={session}>
         <ChakraProvider theme={theme}>
+          {/* @ts-ignore */}
           <Component {...pageProps} err={err} />
         </ChakraProvider>
       </SessionProvider>
