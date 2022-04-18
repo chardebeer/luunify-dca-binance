@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import next from 'next';
 import path from 'path';
@@ -27,18 +27,35 @@ const logger = rootLogger.child({ module: 'app' });
 
     app.use(sentry.Handlers.errorHandler());
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    app.use((err: Error, req: Request, res: Response, _: NextFunction) => {
+    app.use((err: Error, req: Request, res: Response) => {
       logger.error({ err, req });
       res.status(500);
       res.end();
     });
 
-    await mongoose.connect(MONGODB_URI);
+    try {
+      await mongoose.connect(MONGODB_URI);
 
-    // @ts-ignore
-    agenda.mongo(mongoose.connection.getClient().db(), 'jobs');
-    await agenda.start();
+      // @ts-ignore
+      agenda.mongo(mongoose.connection.getClient().db(), 'jobs');
+      await agenda.start();
+    } catch (err) {
+      logger.error('mongoose.connect', { err });
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      const chokidar = require('chokidar');
+      const watcher = chokidar.watch('./dist');
+
+      watcher.on('ready', function () {
+        watcher.on('all', function () {
+          console.log('Clearing /dist/ module cache from server');
+          Object.keys(require.cache).forEach(function (id) {
+            if (/[/\\]dist[/\\]/.test(id)) delete require.cache[id];
+          });
+        });
+      });
+    }
 
     app.listen(port, () => {
       logger.info(`> Ready on localhost:${port} - env ${process.env.NODE_ENV}`);
@@ -48,3 +65,5 @@ const logger = rootLogger.child({ module: 'app' });
     process.exit(1);
   }
 })();
+
+export default {};

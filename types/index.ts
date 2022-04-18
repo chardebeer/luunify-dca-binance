@@ -44,3 +44,10 @@ export type User = {
   timezone: string;
   subscriptionUntil?: Date;
 } & DefaultSession['user'];
+
+export type Asset = {
+  symbol: string;
+  total: number;
+  price: number;
+  usdValue: number;
+};

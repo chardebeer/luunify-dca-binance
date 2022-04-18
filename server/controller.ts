@@ -1,16 +1,19 @@
-import { AssetBalance } from 'binance-api-node';
 import cronstrue from 'cronstrue';
 import Joi from 'joi';
 import moment from 'moment-timezone';
 import mongoose from 'mongoose';
 import agenda from './lib/agenda';
 import binance from './lib/binance';
+import logger from './lib/logger';
 import { Order, User } from './models';
 import { flattenObject, handleJoiValidationError, validateJobConfig, validateTimezone } from './utils';
 import { JobConfig } from './utils';
 
-interface Balance extends AssetBalance {
+interface Balance {
+  symbol: string;
   total: number;
+  price: number;
+  usdValue: number;
 }
 
 type Settings = {
@@ -58,20 +61,41 @@ export default {
     return options;
   },
 
+  async fetchCandles(apiKey: string, apiSecret: string, symbol: string, limit = 7) {
+    try {
+      // const snap = await binance(apiKey, apiSecret).accountSnapshot({ type: 'SPOT' });
+      return await binance(apiKey, apiSecret).candles({ symbol, interval: '1h', limit });
+    } catch (err) {
+      logger.error('fetchAccountBalance', { err });
+      return {};
+    }
+  },
+
   async fetchAccountBalance(apiKey: string, apiSecret: string) {
-    const { balances } = await binance(apiKey, apiSecret).accountInfo();
-    const nonZeroBalances: Balance[] = [];
+    try {
+      const { balances } = await binance(apiKey, apiSecret).accountInfo();
+      const prices = await binance(apiKey, apiSecret).prices();
+      const nonZeroBalances: Balance[] = [];
 
-    balances.forEach((balance) => {
-      if (+balance.free > 0 || +balance.locked > 0) {
-        nonZeroBalances.push({
-          ...balance,
-          total: Number(balance.free) + Number(balance.locked),
-        });
-      }
-    });
+      balances.forEach((b) => {
+        if (+b.free > 0 || +b.locked > 0) {
+          const total = Number(b.free) + Number(b.locked);
+          const price = b.asset.includes('USD') ? 1 / Number(prices['BTCUSDT']) : getAssetPrice(prices, b.asset);
 
-    return nonZeroBalances;
+          nonZeroBalances.push({
+            symbol: b.asset,
+            total,
+            price,
+            usdValue: b.asset.includes('USD') ? total : price * total,
+          });
+        }
+      });
+
+      return nonZeroBalances;
+    } catch (err) {
+      logger.error('fetchAccountBalance', { err });
+      return [];
+    }
   },
 
   async updateSettings(payload: Partial<Settings>) {
@@ -116,20 +140,25 @@ export default {
   },
 
   async fetchAllJobs(userEmail: string) {
-    return await mongoose.connection
-      .getClient()
-      .db()
-      .collection('jobs')
-      .find({ 'data.userEmail': userEmail })
-      .project({
-        data: 1,
-        disabled: 1,
-        lastRunAt: 1,
-        nextRunAt: 1,
-        repeatInterval: 1,
-        repeatTimezone: 1,
-      })
-      .toArray();
+    try {
+      return await mongoose.connection
+        .getClient()
+        .db()
+        .collection('jobs')
+        .find({ 'data.userEmail': userEmail })
+        .project({
+          data: 1,
+          disabled: 1,
+          lastRunAt: 1,
+          nextRunAt: 1,
+          repeatInterval: 1,
+          repeatTimezone: 1,
+        })
+        .toArray();
+    } catch (err) {
+      logger.error('fetchAllJobs', { err });
+      return [];
+    }
   },
 
   async fetchJob(jobId: string) {
@@ -334,3 +363,9 @@ export default {
     }
   },
 };
+
+function getAssetPrice(prices: { [index: string]: string }, symbol: string): number {
+  if (symbol === 'LTC') return Number(prices['LTCBUSD']);
+  const key = Object.keys(prices).find((k) => k.startsWith(symbol) && k.includes('USDT'));
+  return key ? Number(prices[key]) : 0;
+}

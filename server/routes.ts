@@ -26,6 +26,15 @@ router.get('/api/balance', async (req, res, next) => {
   }
 });
 
+router.get('/api/candles', async (req, res, next) => {
+  try {
+    const { apiKey, apiSecret } = await getApiKeysFromToken(req);
+    res.json({ data: await controller.fetchCandles(apiKey, apiSecret, (req.query.symbol as string) || '') });
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.patch('/api/settings/general', async (req, res, next) => {
   try {
     if (req.headers.authorization?.startsWith('Basic ')) {
@@ -173,6 +182,7 @@ async function getApiKeysFromToken(req: any) {
   };
 
   if (!apiKey || !apiSecret) throw new Error('Binance api keys not provided');
+
   return { email, apiKey, apiSecret };
 }
 

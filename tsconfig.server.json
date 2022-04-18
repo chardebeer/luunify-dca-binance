@@ -14,5 +14,6 @@
     "noEmit": false,
     "noEmitOnError": true
   },
-  "include": ["server/**/*.ts"]
+  "include": ["server/**/*.ts"],
+  "exclude": ["next-env.d.ts", "node_modules"]
 }

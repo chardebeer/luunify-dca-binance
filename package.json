@@ -7,7 +7,7 @@
     "build": "npm-run-all build:*",
     "build:next": "next build",
     "build:server": "tsc --project tsconfig.server.json",
-    "dev": "cross-env NODE_ENV=development nodemon",
+    "dev": "cross-env NODE_ENV=development ts-node --project tsconfig.server.json -r dotenv/config server/index.ts | bunyan",
     "postbuild": "node scripts/postbuild",
     "prepare": "husky install",
     "start": "node dist/index | bunyan",
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MlkMahmud/binance-dca-bot.git"
+    "url": "git+https://github.com/chardebeer/luunify-dca-binance.git"
   },
   "keywords": [],
   "devDependencies": {
@@ -38,19 +38,18 @@
     "@types/node": "^16.11.10",
     "@types/nodemailer": "^6.4.4",
     "@types/react": "^17.0.37",
-    "@types/react-select": "^5.0.1",
     "@types/styled-components": "^5.1.24",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "babel-plugin-styled-components": "^2.0.6",
     "babel-plugin-transform-dynamic-import": "^2.1.0",
+    "chokidar": "^3.5.3",
     "cross-env": "^7.0.3",
     "dotenv": "^10.0.0",
     "eslint": "^8.12.0",
     "eslint-plugin-react": "^7.27.1",
     "husky": "^7.0.1",
     "lint-staged": "^11.1.1",
-    "nodemon": "^2.0.12",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.3.2",
     "shelljs": "^0.8.5",
@@ -73,6 +72,8 @@
     "cors": "^2.8.5",
     "cronstrue": "^1.122.0",
     "cross-fetch": "^3.1.5",
+    "crypto-icons-plus": "^1.0.1",
+    "crypto-icons-plus-32": "^1.0.1",
     "crypto-js": "^4.1.1",
     "deep-object-diff": "^1.1.0",
     "express": "^4.17.1",
@@ -95,6 +96,7 @@
     "react-select": "^4.3.1",
     "react-time-picker": "^4.5.0",
     "react-tiny-virtual-list": "^2.2.0",
+    "recharts": "^2.1.9",
     "styled-components": "^5.3.3"
   },
   "engines": {

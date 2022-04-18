@@ -1,10 +1,20 @@
 import BinanceClient, { Binance } from 'binance-api-node';
+import logger from './logger';
 
 const isTestApi = process.env.BINANCE_TESTNET_ENABLED === 'true';
 const config = {
   apiKey: process.env.BINANCE_API_KEY,
   apiSecret: process.env.BINANCE_API_SECRET,
   httpBase: 'https://testnet.binance.vision',
+  enableRateLimit: true,
+  options: {
+    adjustForTimeDifference: true,
+    recvWindow: 5000,
+    useServerTime: false,
+    reconnect: true,
+    verbose: true,
+    log: logger.info,
+  },
 };
 
 export default (apiKey = '', apiSecret = ''): Binance => {
