@@ -52,25 +52,27 @@ export default function Jobs({ defaultTimezone }: Props) {
     setJobs(updatedJobs);
   };
 
-  const updateJobs = (newJob: Job, op: string) => {
-    let updatedJobs: Job[];
-    switch (op) {
-      case 'append':
-        updatedJobs = [...jobs, newJob];
-        break;
-      case 'update':
-        updatedJobs = jobs.map((job) => {
-          if (job._id === newJob._id) {
-            return newJob;
-          }
-          return job;
-        });
-        break;
-      default:
-        throw new Error(`Op: ${op} is invalid`);
+  const updateJobs = (newJob?: Job, op?: string) => {
+    if (newJob && op) {
+      let updatedJobs: Job[];
+      switch (op) {
+        case 'append':
+          updatedJobs = [...jobs, newJob];
+          break;
+        case 'update':
+          updatedJobs = jobs.map((job) => {
+            if (job._id === newJob._id) {
+              return newJob;
+            }
+            return job;
+          });
+          break;
+        default:
+          throw new Error(`Op: ${op} is invalid`);
+      }
+      setJobs(updatedJobs);
+      onClose();
     }
-    setJobs(updatedJobs);
-    onClose();
   };
 
   const openJobForm = (id = '') => {
