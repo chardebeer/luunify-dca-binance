@@ -77,7 +77,7 @@ export default function Subscriptions({ onClose, user, isOpen }: Props) {
           <Stack spacing={2} width="100%" direction="row">
             <Button
               isFullWidth
-              bgImage="linear-gradient(to right, #77a1d3 0%, #79cbca 51%, #77a1d3 100%)"
+              bgImage="linear-gradient(to top right, #622EC3, #4D65DB, #379AEE, #13CCD7)"
               textColor="white"
               borderRadius="2xl"
               boxShadow="xl"

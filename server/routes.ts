@@ -50,6 +50,15 @@ router.patch('/api/settings/general', async (req, res, next) => {
   }
 });
 
+router.get('/api/orders', async (req, res, next) => {
+  try {
+    const token = await getToken({ req });
+    res.json(await controller.getAllOrders(token?.email || ''));
+  } catch (err) {
+    next(err);
+  }
+});
+
 router
   .route('/api/jobs')
   .get(async (req, res, next) => {
@@ -66,8 +75,8 @@ router
       const { status, ...payload } = await controller.createJob({
         ...req.body,
         userEmail: email,
-        apiKey: encrypt(apiKey),
-        apiSecret: encrypt(apiSecret),
+        apiKey,
+        apiSecret,
       });
 
       res.status(status).json({ ...payload });
@@ -96,7 +105,13 @@ router
   })
   .patch(async (req, res, next) => {
     try {
-      const { status, ...payload } = await controller.updateJob(req.params.jobId, req.body);
+      const { email, apiKey, apiSecret } = await getApiKeysFromToken(req);
+      const { status, ...payload } = await controller.updateJob(req.params.jobId, {
+        ...req.body,
+        userEmail: email,
+        apiKey,
+        apiSecret,
+      });
       res.status(status).json(payload);
     } catch (err) {
       next(err);

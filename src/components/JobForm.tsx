@@ -26,7 +26,7 @@ type Props = {
   isOpen: boolean;
   job?: Job | null;
   onFormClose: () => void;
-  onSubmitSuccess: (job: Job, op: 'update' | 'append') => void;
+  onSubmitSuccess: (job?: Job, op?: 'update' | 'append') => void;
 };
 
 type Values = {
@@ -61,8 +61,8 @@ export default function JobForm({ defaultTimezone, isOpen, job, onFormClose, onS
         useDefaultTimezone: false,
       };
 
-  const subTitle = isEditMode ? 'Edit your job details' : 'Create a new recurring job';
-  const title = isEditMode ? 'Edit Job' : 'Create Job';
+  const subTitle = isEditMode ? 'Edit your DCA details' : 'Create a new recurring DCA';
+  const title = isEditMode ? 'Edit DCA' : 'Create DCA';
   const [isLoading, setIsLoading] = useState(false);
   const [minNotional, setMinNotional] = useState(0);
   const btnRef = useRef<HTMLButtonElement>(null);
@@ -79,7 +79,7 @@ export default function JobForm({ defaultTimezone, isOpen, job, onFormClose, onS
     const errors: Partial<Values> = {};
 
     if (!values.jobName) {
-      errors.jobName = 'Job name is required';
+      errors.jobName = 'DCA name is required';
     }
 
     if (!values.symbol) {
@@ -130,7 +130,7 @@ export default function JobForm({ defaultTimezone, isOpen, job, onFormClose, onS
       if (response.ok) {
         onSubmitSuccess(newJob, op);
         displayToast({
-          description: `Job ${isEditMode ? 'updated' : 'created'} successfully`,
+          description: `DCA ${isEditMode ? 'updated' : 'created'} successfully`,
           status: 'success',
           title: 'Success',
         });
@@ -144,7 +144,7 @@ export default function JobForm({ defaultTimezone, isOpen, job, onFormClose, onS
     } catch {
       setIsLoading(false);
       displayToast({
-        description: 'Failed to create job',
+        description: 'Failed to create DCA',
         title: 'Error',
       });
     }
@@ -198,7 +198,7 @@ export default function JobForm({ defaultTimezone, isOpen, job, onFormClose, onS
           }
 
           return (
-            <form aria-label={isEditMode ? 'edit job' : 'create job'} id="job" onSubmit={handleSubmit}>
+            <form aria-label={isEditMode ? 'edit DCA' : 'create DCA'} id="job" onSubmit={handleSubmit}>
               <Box display="flex" flexDirection="row">
                 <Stack spacing={4} width="60%">
                   <Field name="jobName">
@@ -210,7 +210,7 @@ export default function JobForm({ defaultTimezone, isOpen, job, onFormClose, onS
                               Name
                             </Text>
 
-                            <Popover title="Job name">A discernible name for your recurring job.</Popover>
+                            <Popover title="DCA name">A unique name for your recurring DCA.</Popover>
                           </Stack>
                         </FormLabel>
 
@@ -237,9 +237,7 @@ export default function JobForm({ defaultTimezone, isOpen, job, onFormClose, onS
                               Symbol
                             </Text>
 
-                            <Popover title="Symbol">
-                              This is the base asset and quote asset pair you want to trade e.g BTCUSDT
-                            </Popover>
+                            <Popover title="Symbol">This is the asset pair you want to trade e.g BTCUSDT</Popover>
                           </Stack>
                         </FormLabel>
 
@@ -277,8 +275,8 @@ export default function JobForm({ defaultTimezone, isOpen, job, onFormClose, onS
                               </Text>
 
                               <Popover title="Amount">
-                                This is the total amount of the quote asset you are willing to spend—, e.g, a value of
-                                10 for BNBUSDT would equate to buying 10 USDT worth of BNB.
+                                This is the total amount of the asset want to buy, e.g, a value of 10 for BNBUSDT would
+                                equate to buying 10 USDT worth of BNB.
                               </Popover>
                             </Stack>
                           </FormLabel>
@@ -313,7 +311,7 @@ export default function JobForm({ defaultTimezone, isOpen, job, onFormClose, onS
                               </Text>
 
                               <Popover title="Timezone">
-                                Set a specific timezone for your job schedule or use your global default.
+                                Set a specific timezone for your DCA schedule or use your global default.
                               </Popover>
                             </Stack>
                           </FormLabel>

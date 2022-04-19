@@ -79,9 +79,11 @@ export default function JobList({ defaultTimezone, jobs, handleDelete, handleUpd
       setIsLoading(true);
       const response = await fetch(`/api/jobs/${jobId}`, { method: 'DELETE' });
       const { message: description } = await response.json();
+
       if (response.ok) {
         onClose();
         handleDelete(jobId);
+
         displayToast({
           description,
           status: 'success',
@@ -110,20 +112,24 @@ export default function JobList({ defaultTimezone, jobs, handleDelete, handleUpd
       setIsLoading(true);
       const job = jobs.find(({ _id }) => _id === jobId) as JobType;
       const payload = { paused: true };
+
       if (job.data.paused) {
         payload.paused = false;
       }
+
       const response = await fetch(`/api/jobs/${jobId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
+
       const { data: updatedJob, message: description } = await response.json();
+
       if (response.ok) {
         handleUpdate(updatedJob, 'update');
         onClose();
         displayToast({
-          description: 'Job updated successfully',
+          description: 'DCA updated successfully',
           status: 'success',
           title: 'Success',
         });
@@ -146,7 +152,8 @@ export default function JobList({ defaultTimezone, jobs, handleDelete, handleUpd
   return (
     <>
       <Box overflow="auto">
-        <Text fontSize="2xl" fontWeight="bold" mb="20px">{`Jobs(${jobs.length})`}</Text>
+        <Text fontSize="2xl" fontWeight="bold" mb="20px">{`DCAs(${jobs.length})`}</Text>
+
         {isMobile ? (
           <>{jobsArray}</>
         ) : (
@@ -168,7 +175,7 @@ export default function JobList({ defaultTimezone, jobs, handleDelete, handleUpd
               <Thead>
                 <Tr>
                   <TableCell isFixed isHeading>
-                    Job Name
+                    DCA Name
                   </TableCell>
                   <TableCell isHeading>Symbol</TableCell>
                   <TableCell isHeading>Amount</TableCell>
@@ -183,8 +190,9 @@ export default function JobList({ defaultTimezone, jobs, handleDelete, handleUpd
             </Table>
           </Box>
         )}
+
         <IconButton
-          aria-label="add new job"
+          aria-label="add new DCA"
           bgColor="black"
           borderRadius="50%"
           bottom="40px"
@@ -201,10 +209,11 @@ export default function JobList({ defaultTimezone, jobs, handleDelete, handleUpd
           zIndex={4}
         />
       </Box>
+
       {isOpen && (
         <Prompt
           destructive={isDeleteMode}
-          heading={isDeleteMode ? 'Delete job' : 'Edit Job'}
+          heading={isDeleteMode ? 'Delete DCA' : 'Edit DCA'}
           isLoading={isLoading}
           isOpen={isOpen}
           onClose={() => {
@@ -215,10 +224,11 @@ export default function JobList({ defaultTimezone, jobs, handleDelete, handleUpd
           onConfirm={isDeleteMode ? onDelete : onUpdate}
         >
           {isDeleteMode
-            ? 'Deleting this job will also delete all of its related data, are you sure you want to continue?'
+            ? 'Deleting this DCA will also delete all of its related data, are you sure you want to continue?'
             : 'Please click the confirm button to proceed.'}
         </Prompt>
       )}
+
       {showOrderHistory && (
         <OrderHistory
           isOpen={showOrderHistory}

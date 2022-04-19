@@ -128,13 +128,13 @@ export default function Job({
             />
             <MenuList>
               <MenuItem icon={disabled ? <PlayIcon /> : <PauseIcon />} onClick={() => onButtonClick(id, 'status')}>
-                {`${disabled ? 'Resume' : 'Pause'} job`}
+                {`${disabled ? 'Resume' : 'Pause'} DCA`}
               </MenuItem>
               <MenuItem icon={<EditIcon />} onClick={() => onButtonClick(id, 'edit')}>
-                Edit job
+                Edit DCA
               </MenuItem>
               <MenuItem icon={<DeleteIcon />} onClick={() => onButtonClick(id, 'delete')}>
-                Delete job
+                Delete DCA
               </MenuItem>
               <MenuItem icon={<HistoryIcon />} onClick={() => onButtonClick(id, 'history')}>
                 View order history

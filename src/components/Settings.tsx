@@ -131,16 +131,16 @@ export default function Settings({ user }: Props) {
         <Stack spacing={2} width="100%" direction="row">
           <Button
             isFullWidth
-            bgImage="linear-gradient(to right, #77a1d3 0%, #79cbca 51%, #77a1d3 100%)"
+            bgImage="linear-gradient(to top right, #622EC3, #4D65DB, #379AEE, #13CCD7)"
             textColor="white"
             borderRadius="2xl"
             boxShadow="xl"
             _hover={{ opacity: 0.5, backgroundColor: 'unset' }}
             form={onClick ? undefined : 'settings'}
             isLoading={loading}
-            ref={btnRef}
+            ref={onClick ? undefined : btnRef}
             onClick={onClick}
-            type="submit"
+            type={onClick ? 'button' : 'submit'}
           >
             {text}
           </Button>
@@ -310,7 +310,7 @@ export default function Settings({ user }: Props) {
                       </Field>
                     </Flex>
 
-                    <Flex marginTop="80px" flexDirection="column" justifyContent="space-around">
+                    <Flex marginTop="100px" flexDirection="column" justifyContent="space-around">
                       <Stack direction={['column', 'row']} spacing={3}>
                         <Field name="telegram.botToken">
                           {({ input }) => (

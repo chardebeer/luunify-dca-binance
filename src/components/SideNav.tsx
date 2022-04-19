@@ -27,7 +27,7 @@ function SideNav({ className, fill, selectedPage, setSelectedPage }: Props) {
         <WalletsIcon fill={fill} />
       </StyledSideNavButton>
 
-      <StyledSideNavButton>
+      <StyledSideNavButton onClick={() => setSelectedPage('jobs')} isSelected={selectedPage === 'jobs'}>
         <RecordsIcon fill={fill} />
       </StyledSideNavButton>
 
@@ -35,7 +35,7 @@ function SideNav({ className, fill, selectedPage, setSelectedPage }: Props) {
         <MarketIcon fill={fill} />
       </StyledSideNavButton>
 
-      <StyledSideNavButton onClick={() => setSelectedPage('jobs')} isSelected={selectedPage === 'jobs'}>
+      <StyledSideNavButton onClick={() => setSelectedPage('orders')} isSelected={selectedPage === 'orders'}>
         <LoansIcon fill={fill} />
       </StyledSideNavButton>
 

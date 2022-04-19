@@ -122,7 +122,7 @@ export function flattenObject(object: { [key: string]: any } = {}) {
 
 export function encrypt(str: string) {
   if (!process.env.ENCRYPTION_KEY) throw new Error('ENCRYPTION_KEY required in env');
-  return CryptoJS.AES.encrypt(JSON.stringify({ str }), process.env.ENCRYPTION_KEY).toString();
+  return CryptoJS.AES.encrypt(str, process.env.ENCRYPTION_KEY).toString();
 }
 
 export function decrypt(str: string) {

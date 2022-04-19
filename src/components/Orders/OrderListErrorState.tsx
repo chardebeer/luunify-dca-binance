@@ -5,7 +5,7 @@ type Props = {
   onRetry: () => Promise<void>;
 };
 
-export default function JobListErrorState({ onRetry }: Props) {
+export default function OrderListErrorState({ onRetry }: Props) {
   return (
     <Flex align="center" direction="column" py={2.5}>
       <Box maxW="400px" mb="20px">
@@ -18,7 +18,7 @@ export default function JobListErrorState({ onRetry }: Props) {
         </Text>
 
         <Text color="#36454F" maxW="300px" textAlign="center">
-          We seem to have run into some trouble fetching your DCAs. Would you like to give it another try?
+          We seem to have run into some trouble fetching your orders. Would you like to give it another try?
         </Text>
 
         <Button borderRadius="20px" colorScheme="black" isFullWidth maxW="200px" onClick={onRetry}>

@@ -32,6 +32,7 @@ export default NextAuth({
       async sendVerificationRequest({ identifier: email, url, provider: { server, from } }) {
         const { host } = new URL(url);
         const transport = nodemailer.createTransport(server);
+
         await transport.sendMail({
           to: email,
           from,
@@ -64,7 +65,7 @@ export default NextAuth({
           token.user = user;
         }
       } catch (err) {
-        logger.error('updateUser', { err });
+        logger.error('updateUser error', { err });
       }
 
       return token;

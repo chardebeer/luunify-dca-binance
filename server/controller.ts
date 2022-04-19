@@ -306,6 +306,14 @@ export default {
     return { status: 200, message: 'Job successfully deleted' };
   },
 
+  async getAllOrders(userEmail: string) {
+    const orders = await Order.find({ userEmail }, null, {
+      sort: { transactTime: -1 },
+    });
+
+    return { data: orders };
+  },
+
   async getOrders(jobId: string) {
     const orders = await Order.find({ jobId }, null, {
       sort: { transactTime: -1 },

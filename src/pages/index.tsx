@@ -8,6 +8,7 @@ import Settings from 'src/components/Settings';
 import styled from 'styled-components';
 import Welcome from 'src/components/Welcome';
 import StyledSideNav from 'src/styles/SideNav.style';
+import Orders from 'src/components/Orders';
 
 const MessageText = styled.h1`
   color: #333;
@@ -83,6 +84,9 @@ export default function Index() {
           {selectedPage === 'portfolio' && <Portfolio />}
           {selectedPage === 'settings' && <Settings user={user} />}
           {selectedPage === 'jobs' && <Jobs defaultTimezone={user?.timezone || ''} />}
+          {selectedPage === 'orders' && (
+            <Orders defaultTimezone={user?.timezone || ''} navigateToJobs={() => setSelectedPage('jobs')} />
+          )}
         </DashBoardContainer>
       </ErrorBoundary>
     );

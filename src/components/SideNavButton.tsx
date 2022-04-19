@@ -24,7 +24,7 @@ export default function SideNavButton({ className, style, isSelected, onClick, c
 
       {isSelected && (
         <Box
-          background="linear-gradient(to top, #622ec3, #4d65db, #379aee, #13ccd7)"
+          background="linear-gradient(to top right, #622ec3, #4d65db, #379aee, #13ccd7)"
           position="relative"
           height="80%"
           right={'-14px'}
