@@ -30,7 +30,7 @@ export default function OrderList({ orders }: Props) {
   return (
     <>
       <Box overflow="auto">
-        <Text fontSize="2xl" fontWeight="bold" mb="20px">{`DCAs(${orders.length})`}</Text>
+        <Text fontSize="2xl" fontWeight="bold" mb="20px">{`Orders(${orders.length})`}</Text>
 
         {isMobile ? (
           <>{ordersArray}</>

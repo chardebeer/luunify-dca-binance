@@ -223,9 +223,7 @@ export default function JobList({ defaultTimezone, jobs, handleDelete, handleUpd
           }}
           onConfirm={isDeleteMode ? onDelete : onUpdate}
         >
-          {isDeleteMode
-            ? 'Deleting this DCA will also delete all of its related data, are you sure you want to continue?'
-            : 'Please click the confirm button to proceed.'}
+          {isDeleteMode ? 'Are you sure you want to delete this DCA?' : 'Please click the confirm button to proceed.'}
         </Prompt>
       )}
 
