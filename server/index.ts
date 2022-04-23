@@ -49,7 +49,7 @@ const logger = rootLogger.child({ module: 'app' });
 
       watcher.on('ready', function () {
         watcher.on('all', function () {
-          console.log('Clearing /dist/ module cache from server');
+          logger.info('Clearing /dist/ module cache from server');
           Object.keys(require.cache).forEach(function (id) {
             if (/[/\\]dist[/\\]/.test(id)) delete require.cache[id];
           });

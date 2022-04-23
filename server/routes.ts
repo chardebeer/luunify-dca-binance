@@ -35,6 +35,18 @@ router.get('/api/candles', async (req, res, next) => {
   }
 });
 
+router.get('/api/news', async (req, res, next) => {
+  try {
+    const response = await fetch(
+      `https://cryptopanic.com/api/v1/posts/?auth_token=28e15d8a4531c0cb8d4b31483b27fce425277596&currencies=${req.query.currencies}`
+    );
+
+    res.json((await response.json()).results);
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.patch('/api/settings/general', async (req, res, next) => {
   try {
     if (req.headers.authorization?.startsWith('Basic ')) {

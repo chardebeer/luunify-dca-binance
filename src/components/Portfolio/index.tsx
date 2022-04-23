@@ -5,21 +5,13 @@ import { Asset } from 'types';
 
 const PortfolioDefaultState = dynamic(() => import('./PortfolioDashboard'), {
   loading: ({ error }) => {
-    if (error) {
-      return <Loading error={error} />;
-    }
-
-    return <Loading />;
+    return <Loading error={error} />;
   },
 });
 
 const PortfolioErrorState = dynamic(() => import('./PortfolioErrorState'), {
   loading: ({ error }) => {
-    if (error) {
-      return <Loading error={error} />;
-    }
-
-    return <Loading />;
+    return <Loading error={error} />;
   },
 });
 
@@ -46,7 +38,7 @@ export default function Portfolio() {
         throw new Error(response.statusText);
       }
     } catch (e) {
-      // setError(true);
+      setError(true);
       setIsLoading(false);
     }
   }

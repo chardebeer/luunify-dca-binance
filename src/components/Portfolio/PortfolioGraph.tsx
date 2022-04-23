@@ -10,7 +10,7 @@ type Props = {
 
 function PortfolioGraph({ asset }: Props) {
   const [data, setData] = useState([]);
-
+  //https: cryptopanic.com/api/v1/posts/?auth_token=28e15d8a4531c0cb8d4b31483b27fce425277596&currencies=BTC,ETH
   async function getPrices() {
     try {
       const response = await fetch(

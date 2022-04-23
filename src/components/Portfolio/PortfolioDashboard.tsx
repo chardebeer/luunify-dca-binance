@@ -4,6 +4,7 @@ import PortfolioGraph from './PortfolioGraph';
 import PortfolioPieChart from './PortfolioPieChart';
 import { Flex } from '@chakra-ui/react';
 import { Asset } from 'types';
+import NewsFeed from './NewsFeed';
 
 type Props = {
   assets: Asset[];
@@ -31,7 +32,10 @@ function PortfolioDashboard({ assets, fetchAssets, isLoading }: Props) {
         <PortfolioBalance asset={selectedAsset} onNext={onNext} onPrevious={onPrevious} isLoading={isLoading} />
         <PortfolioGraph asset={selectedAsset} />
       </div>
-      <PortfolioPieChart assets={assets} />
+      <div>
+        <PortfolioPieChart assets={assets} />
+        <NewsFeed assets={assets} />
+      </div>
     </Flex>
   );
 }
