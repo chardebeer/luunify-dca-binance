@@ -1,5 +1,4 @@
 import React, { ReactNode } from 'react';
-import Loading from './Loading';
 import { User } from 'next-auth';
 import StyledSideNav from 'src/styles/SideNav.style';
 import ErrorBoundary from './ErrorBoundary';
