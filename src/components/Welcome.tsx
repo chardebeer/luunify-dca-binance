@@ -1,4 +1,4 @@
-import { getSession, signIn } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 import React from 'react';
 import styled from 'styled-components';
 import BlackButton from '../styles/BlackButton.style';
@@ -32,19 +32,4 @@ export default function Welcome() {
       <BlackButton onClick={() => signIn()}>Sign In</BlackButton>
     </StyledPage>
   );
-}
-
-export async function getServerSideProps({ req }: any) {
-  const session = await getSession({ req });
-
-  if (session) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: '/',
-      },
-    };
-  }
-
-  return { props: {} };
 }

@@ -1,11 +1,14 @@
 import { useDisclosure, Center } from '@chakra-ui/react';
 import dynamic from 'next/dynamic';
 import React, { useEffect, useState } from 'react';
-import { Job } from 'types';
-import Loading from '../Loading';
-import JobListLoadingState from './JobListLoadingState';
+import { Job, User } from 'types';
+import Loading from '../components/Loading';
+import JobListLoadingState from '../components/Jobs/JobListLoadingState';
+import PageWrapper from 'src/components/PageWrapper';
+import { getSession } from 'next-auth/react';
+import { NextPageContext } from 'next';
 
-const JobListEmptyState = dynamic(() => import('./JobListEmptyState'), {
+const JobListEmptyState = dynamic(() => import('../components/Jobs/JobListEmptyState'), {
   loading: ({ error }) => {
     if (error) {
       return <Loading error={error} />;
@@ -14,7 +17,7 @@ const JobListEmptyState = dynamic(() => import('./JobListEmptyState'), {
   },
 });
 
-const JobListErrorState = dynamic(() => import('./JobListErrorState'), {
+const JobListErrorState = dynamic(() => import('../components/Jobs/JobListErrorState'), {
   loading: ({ error }) => {
     if (error) {
       return <Loading error={error} />;
@@ -23,11 +26,11 @@ const JobListErrorState = dynamic(() => import('./JobListErrorState'), {
   },
 });
 
-const JobForm = dynamic(() => import('../JobForm'), {
+const JobForm = dynamic(() => import('../components/JobForm'), {
   loading: ({ error }) => <Loading error={error} />,
 });
 
-const JobList = dynamic(() => import('./JobList'), {
+const JobList = dynamic(() => import('../components/Jobs/JobList'), {
   loading: ({ error }) => {
     if (error) {
       return <Loading error={error} />;
@@ -37,10 +40,10 @@ const JobList = dynamic(() => import('./JobList'), {
 });
 
 type Props = {
-  defaultTimezone: string;
+  user?: User;
 };
 
-export default function Jobs({ defaultTimezone }: Props) {
+export default function Jobs({ user }: Props) {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const [isLoading, setIsloading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -102,49 +105,61 @@ export default function Jobs({ defaultTimezone }: Props) {
     fetchJobs();
   }, []);
 
-  if (isLoading) {
-    return (
-      <Center height="100%" width="100%">
-        <JobListLoadingState />
-      </Center>
-    );
-  }
+  function renderContent() {
+    if (isLoading) return <JobListLoadingState />;
+    // @ts-ignore
+    if (hasError) return <JobListErrorState onRetry={fetchJobs} />;
 
-  if (hasError) {
     return (
-      <Center height="100%" width="100%">
-        {/* @ts-ignore */}
-        <JobListErrorState onRetry={fetchJobs} />
-      </Center>
+      <>
+        {jobs.length > 0 ? (
+          // @ts-ignore
+          <JobList
+            defaultTimezone={user?.timezone || ''}
+            handleDelete={deleteJob}
+            handleUpdate={updateJobs}
+            jobs={jobs}
+            openJobForm={openJobForm}
+          />
+        ) : (
+          // @ts-ignore
+          <JobListEmptyState onClick={openJobForm} />
+        )}
+
+        {isOpen && (
+          // @ts-ignore
+          <JobForm
+            defaultTimezone={user?.timezone || ''}
+            isOpen={isOpen}
+            job={selectedJob}
+            onFormClose={onClose}
+            onSubmitSuccess={updateJobs}
+          />
+        )}
+      </>
     );
   }
 
   return (
-    <Center height="100%" width="100%">
-      {jobs.length > 0 ? (
-        // @ts-ignore
-        <JobList
-          defaultTimezone={defaultTimezone}
-          handleDelete={deleteJob}
-          handleUpdate={updateJobs}
-          jobs={jobs}
-          openJobForm={openJobForm}
-        />
-      ) : (
-        // @ts-ignore
-        <JobListEmptyState onClick={openJobForm} />
-      )}
-
-      {isOpen && (
-        // @ts-ignore
-        <JobForm
-          defaultTimezone={defaultTimezone}
-          isOpen={isOpen}
-          job={selectedJob}
-          onFormClose={onClose}
-          onSubmitSuccess={updateJobs}
-        />
-      )}
-    </Center>
+    <PageWrapper user={user}>
+      <Center height="100vh" width="100%">
+        {renderContent()}
+      </Center>
+    </PageWrapper>
   );
+}
+
+export async function getServerSideProps(ctx: NextPageContext) {
+  const session = await getSession(ctx);
+
+  if (!session?.user) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/',
+      },
+    };
+  }
+
+  return { props: { user: session.user } };
 }

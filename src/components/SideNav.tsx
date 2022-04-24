@@ -8,15 +8,30 @@ import MarketIcon from './icons/MarketIcon';
 import RecordsIcon from './icons/RecordsIcon';
 import WalletsIcon from './icons/WalletsIcon';
 import Logo from './Logo';
+import { useRouter } from 'next/router';
+import { User } from 'types';
 
 type Props = {
   className?: string;
   fill?: string;
-  selectedPage: string;
-  setSelectedPage: (page: string) => void;
+  user?: User;
 };
 
-function SideNav({ className, fill, selectedPage, setSelectedPage }: Props) {
+function SideNav({ className, fill, user }: Props) {
+  const subscriptionActive = user?.subscriptionUntil && user.subscriptionUntil >= new Date();
+  const router = useRouter();
+
+  function switchPage(page: string) {
+    if (user?.binance?.apiKey && user?.binance?.apiSecret && !subscriptionActive) {
+      router.replace(page);
+    } else {
+      let message = '';
+      if (!user?.binance?.apiKey || !user?.binance?.apiSecret) message = 'Binance api keys required. ';
+      if (!subscriptionActive) message += 'Subscription required.';
+      alert(message);
+    }
+  }
+
   return (
     <div className={className}>
       <StyledSideNavButton style={{ width: '100%', padding: '4px', marginBottom: '4px', backgroundColor: '#222' }}>
@@ -27,15 +42,15 @@ function SideNav({ className, fill, selectedPage, setSelectedPage }: Props) {
         <WalletsIcon fill={fill} />
       </StyledSideNavButton>
 
-      <StyledSideNavButton onClick={() => setSelectedPage('jobs')} isSelected={selectedPage === 'jobs'}>
+      <StyledSideNavButton onClick={() => switchPage('/jobs')} isSelected={router.pathname === '/jobs'}>
         <RecordsIcon fill={fill} />
       </StyledSideNavButton>
 
-      <StyledSideNavButton onClick={() => setSelectedPage('portfolio')} isSelected={selectedPage === 'portfolio'}>
+      <StyledSideNavButton onClick={() => switchPage('/portfolio')} isSelected={router.pathname === '/portfolio'}>
         <MarketIcon fill={fill} />
       </StyledSideNavButton>
 
-      <StyledSideNavButton onClick={() => setSelectedPage('orders')} isSelected={selectedPage === 'orders'}>
+      <StyledSideNavButton onClick={() => switchPage('/orders')} isSelected={router.pathname === '/orders'}>
         <LoansIcon fill={fill} />
       </StyledSideNavButton>
 
@@ -47,7 +62,7 @@ function SideNav({ className, fill, selectedPage, setSelectedPage }: Props) {
         <ShopListIcon fill={fill} />
       </StyledSideNavButton>
 
-      <StyledSideNavButton onClick={() => setSelectedPage('settings')} isSelected={selectedPage === 'settings'}>
+      <StyledSideNavButton onClick={() => switchPage('/')} isSelected={router.pathname === '/'}>
         <SettingsIcon fill={fill} />
       </StyledSideNavButton>
     </div>

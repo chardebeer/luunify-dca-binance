@@ -1,5 +1,6 @@
 import { Center, Link, Spinner } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
+import { useIsMounted } from 'src/client-utils';
 import StyledDashBoardBox from 'src/styles/DashBoardBox.style';
 import { Asset } from 'types';
 
@@ -9,13 +10,14 @@ type Props = {
 
 function NewsFeed({ assets }: Props) {
   const [data, setData] = useState<any[]>([]);
+  const isMounted = useIsMounted();
 
   async function getData() {
     try {
       const currencies = assets.map((a) => a.symbol).join(',');
       const response = await fetch(`/api/news?currencies=${currencies}`);
 
-      if (response.ok) {
+      if (response.ok && isMounted()) {
         setData(await response.json());
       } else {
         throw new Error(response.statusText);
@@ -27,7 +29,7 @@ function NewsFeed({ assets }: Props) {
 
   useEffect(() => {
     if (!data.length) getData();
-    const timer = setInterval(getData, 15000);
+    const timer = setInterval(getData, 31000);
     return () => clearInterval(timer);
   }, []);
 

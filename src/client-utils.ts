@@ -1,5 +1,5 @@
 import { createStandaloneToast } from '@chakra-ui/react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 export function useMediaQuery(query: string) {
   const [matches, setMatches] = useState(false);
@@ -46,6 +46,7 @@ export function displayToast({
   title: string;
 }) {
   const toast = createStandaloneToast();
+
   toast({
     description,
     duration: 5000,
@@ -72,4 +73,18 @@ export async function getTimezones(query: string) {
     return data;
   }
   return [];
+}
+
+export function useIsMounted() {
+  const isMounted = useRef(false);
+
+  useEffect(() => {
+    isMounted.current = true;
+
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  return useCallback(() => isMounted.current, []);
 }

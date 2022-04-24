@@ -1,6 +1,7 @@
 import { Center, Spinner } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { useIsMounted } from 'src/client-utils';
 import StyledDashBoardBox from 'src/styles/DashBoardBox.style';
 import { Asset } from 'types';
 
@@ -10,7 +11,8 @@ type Props = {
 
 function PortfolioGraph({ asset }: Props) {
   const [data, setData] = useState([]);
-  //https: cryptopanic.com/api/v1/posts/?auth_token=28e15d8a4531c0cb8d4b31483b27fce425277596&currencies=BTC,ETH
+  const isMounted = useIsMounted();
+
   async function getPrices() {
     try {
       const response = await fetch(
@@ -20,12 +22,13 @@ function PortfolioGraph({ asset }: Props) {
       if (response.ok) {
         const json = await response.json();
 
-        setData(
-          json.data.map(({ open, openTime }) => ({
-            name: `${new Date(openTime).getHours()}:00`,
-            price: asset.symbol.includes('USD') ? (1 / Number(open)) * 1000000 : Number(open),
-          }))
-        );
+        isMounted() &&
+          setData(
+            json.data.map(({ open, openTime }) => ({
+              name: `${new Date(openTime).getHours()}:00`,
+              price: asset.symbol.includes('USD') ? (1 / Number(open)) * 1000000 : Number(open),
+            }))
+          );
       } else {
         throw new Error(response.statusText);
       }

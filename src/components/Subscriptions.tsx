@@ -22,13 +22,13 @@ type Props = {
 };
 
 export default function Subscriptions({ onClose, user, isOpen }: Props) {
-  const subscriptionUntil = user.subscriptionUntil ? new Date(user.subscriptionUntil) : undefined;
+  const subscriptionUntil = user?.subscriptionUntil ? new Date(user?.subscriptionUntil) : undefined;
   const [paymentUrl, setPaymentUrl] = useState('');
   const [pendingPayment, setPendingPayment] = useState(false);
 
   useEffect(() => {
     async function createCharge() {
-      const res = await fetch(`/api/createCharge?email=${user.email}&subscription=${user.subscriptionUntil || ''}`);
+      const res = await fetch(`/api/createCharge?email=${user.email}&subscription=${user?.subscriptionUntil || ''}`);
       const data = await res.json();
 
       setPaymentUrl(data.hosted_url);
@@ -39,10 +39,10 @@ export default function Subscriptions({ onClose, user, isOpen }: Props) {
 
   function getSubscriptionText() {
     if (pendingPayment) return 'Pending Payment';
-    if (!subscriptionUntil) return 'No Active Subsciptions';
+    if (!subscriptionUntil) return 'No Active Subscriptions';
 
     return (
-      (subscriptionUntil < new Date() ? 'Subsciption Expired At ' : 'Subsciptions Active Until ') +
+      (subscriptionUntil < new Date() ? 'Subsciption Expired At ' : 'Subscriptions Active Until ') +
       subscriptionUntil.toLocaleString()
     );
   }
