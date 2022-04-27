@@ -6,6 +6,7 @@ import ChatIcon from './icons/ChatIcon';
 import SearchBar from './SearchBar';
 import ProfilePic from './ProfilePic';
 import { BsChevronDown } from 'react-icons/bs';
+import ExchangeActivity from './ExchangeActivity';
 
 const StyledDiv = styled.div`
   border: none;
@@ -43,9 +44,9 @@ function TopNav({ className }: Props) {
       <ActivityIcon />
       <ChatIcon />
       <ProfilePic />
-      <button>
+      <ExchangeActivity>
         <BsChevronDown size={15} />
-      </button>
+      </ExchangeActivity>
       <span>|</span>
       <StyledButton>+</StyledButton>
     </StyledDiv>

@@ -23,6 +23,7 @@ export default function PageWrapper({ user, children }: Props) {
     // @ts-ignore
     <ErrorBoundary>
       <StyledTopNav />
+
       <HomeContainer>
         {/* @ts-ignore */}
         <StyledSideNav user={user} />
