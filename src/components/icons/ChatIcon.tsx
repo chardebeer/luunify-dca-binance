@@ -1,16 +1,15 @@
-import * as React from "react";
+import * as React from 'react';
 
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const StyledButton = styled.button`
   border: none;
-  background: none;
   display: flex;
   align-items: center;
   justify-content: center;
   &: hover {
-    background: grey;
-    color: #222222;
+    background: lightblue;
+
     border-radius: 20px;
   }
 `;
@@ -18,14 +17,7 @@ const StyledButton = styled.button`
 function ChatIcon(props) {
   return (
     <StyledButton>
-      <svg
-        width={33}
-        height={33}
-        fill="none" 
-        stroke="currentColor"
-        xmlns="http://www.w3.org/2000/svg"
-        {...props}
-      >
+      <svg width={33} height={33} xmlns="http://www.w3.org/2000/svg" {...props}>
         <path
           fillRule="evenodd"
           clipRule="evenodd"

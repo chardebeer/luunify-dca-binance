@@ -1,6 +1,6 @@
-import * as React from "react";
+import * as React from 'react';
 
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const StyledButton = styled.button`
   border: none;
@@ -9,7 +9,7 @@ const StyledButton = styled.button`
   align-items: center;
   justify-content: center;
   &: hover {
-    background: grey;
+    background: lightblue;
     color: #222222;
     border-radius: 20px;
   }
@@ -18,14 +18,7 @@ const StyledButton = styled.button`
 function ActivityIcon(props) {
   return (
     <StyledButton>
-      <svg
-        width={33}
-        height={33}
-        fill="none" 
-        stroke="currentColor"
-        xmlns="http://www.w3.org/2000/svg"
-        {...props}
-      >
+      <svg width={33} height={33} xmlns="http://www.w3.org/2000/svg" {...props}>
         <path
           fillRule="evenodd"
           clipRule="evenodd"

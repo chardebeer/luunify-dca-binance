@@ -1,7 +1,15 @@
 import * as React from 'react';
 
 const SettingsIcon = (props) => (
-  <svg width={33} height={33} fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ paddingLeft: 2 }} {...props}>
+  <svg
+    width={33}
+    height={33}
+    fill="none"
+    stroke="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ paddingLeft: 2 }}
+    {...props}
+  >
     <path
       fillRule="evenodd"
       clipRule="evenodd"
