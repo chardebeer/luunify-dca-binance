@@ -52,7 +52,7 @@ function PortfolioBalance({ asset, onNext, onPrevious, isLoading }: Props) {
           <Flex
             position="absolute"
             left={`${155 - (asset.total > 999999 ? 15 : 0)}px`}
-            top="115px"
+            top="195px"
             alignItems="center"
             justifyContent="center"
             borderRadius="100%"

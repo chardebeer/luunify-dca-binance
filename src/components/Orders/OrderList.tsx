@@ -58,6 +58,7 @@ export default function OrderList({ orders }: Props) {
                   <TableCell isHeading>Quantity</TableCell>
                   <TableCell isHeading>AVG Price</TableCell>
                   <TableCell isHeading>USD Value</TableCell>
+                  <TableCell isHeading>Profit PRCT %</TableCell>
                   <TableCell isHeading>ID</TableCell>
                   <TableCell isHeading>Exec Time</TableCell>
                   <TableCell isHeading>Status</TableCell>

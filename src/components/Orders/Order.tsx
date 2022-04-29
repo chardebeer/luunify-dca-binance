@@ -75,6 +75,7 @@ export default function Order({
           <OrderCard title="qty">{executedQty}</OrderCard>
           <OrderCard title="avg price">{price}</OrderCard>
           <OrderCard title="usd value">${Number(cummulativeQuoteQty).toFixed(2)}</OrderCard>
+          <OrderCard title="Profit %">{price}</OrderCard>
           <OrderCard title="id">{orderId}</OrderCard>
           <OrderCard isVertical title="time">
             {new Date(`${transactTime}`).toLocaleString('en-GB') || '---'}
@@ -93,6 +94,8 @@ export default function Order({
       <TableCell>{executedQty}</TableCell>
       <TableCell>{price}</TableCell>
       <TableCell>${Number(cummulativeQuoteQty).toFixed(2)}</TableCell>
+      <TableCell>{orderId}</TableCell>
+
       <TableCell>{orderId}</TableCell>
       <TableCell>{new Date(`${transactTime}`).toLocaleString('en-GB') || '---'}</TableCell>
       <TableCell>
