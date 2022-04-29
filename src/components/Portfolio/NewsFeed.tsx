@@ -45,7 +45,7 @@ function NewsFeed({ assets }: Props) {
 
   return (
     <StyledDashBoardBox heading="News" style={{ textAlign: 'left', marginLeft: 0 }}>
-      <ul style={{ maxHeight: 200, width: 360, padding: 4, marginTop: 2, overflowY: 'auto' }}>
+      <ul style={{ maxHeight: 200, width: 360, padding: 4, marginTop: 2, overflowY: 'scroll' }}>
         {data.map((d, i) => (
           <li
             style={{
