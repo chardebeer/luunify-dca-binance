@@ -5,7 +5,6 @@ import PortfolioPieChart from './PortfolioPieChart';
 import { Flex } from '@chakra-ui/react';
 import { Asset } from 'types';
 import NewsFeed from './NewsFeed';
-import StyledTradeSettingsModal from 'src/styles/TradeSettingsModal.style';
 import StyledExchangeActivityBox from 'src/styles/ExchangeActivityBox.style';
 
 type Props = {
@@ -39,7 +38,6 @@ function PortfolioDashboard({ assets, fetchAssets, isLoading }: Props) {
         <NewsFeed assets={assets} />
       </div>
       <StyledExchangeActivityBox assets={assets} />
-      <StyledTradeSettingsModal />
     </Flex>
   );
 }

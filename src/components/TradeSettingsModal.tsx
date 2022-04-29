@@ -11,7 +11,7 @@ type Props = {
   color?: string;
 };
 
-function TradeSettingsModal({ className, children }: Props) {
+function TradeSettingsModal({ className }: Props) {
   return (
     <div className="container">
       <span>

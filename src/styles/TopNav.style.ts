@@ -13,6 +13,7 @@ const StyledTopNav = styled(TopNav)`
   align-items: center;
   flex-direction: row;
   font-family: montserrat;
+  
 `;
 
 export default StyledTopNav;
