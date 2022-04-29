@@ -45,6 +45,7 @@ export default function OrderList({ orders }: Props) {
             shadow="0 0 5px 5px rgb(23 24 24 / 5%), 0 1px 2px rgb(0 0 0 / 15%), 0 0 0 1px rgb(63 63 68 / 5%), 0 1px 3px 0 rgb(63 63 68 / 15%)"
           >
             <Table
+              variant="striped"
               css={{
                 borderCollapse: 'separate',
                 borderSpacing: 0,

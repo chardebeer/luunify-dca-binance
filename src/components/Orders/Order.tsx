@@ -2,6 +2,7 @@ import { Badge, Stack, Text, Tr } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
 import TableCell from '../TableCell';
 import { Order as OrderType } from 'types';
+import styled from 'styled-components';
 
 type OrderCardProps = {
   children: React.ReactNode;
@@ -88,14 +89,51 @@ export default function Order({
     );
   }
 
+  const StyledTableHeader = styled.h3`
+    color: #666;
+    font-size: 0.8em;
+  `;
+  const StyledTableData = styled.p`
+    color: #666;
+    font-size: 1em;
+    font-weight: 700;
+  `;
+  const StyledTableContainer = styled.div`
+    display: flex-box;
+    justify-content: space-between;
+    margin: 15px;
+  `;
+
   return (
     <Tr>
-      <TableCell isFixed>{symbol}</TableCell>
+      <TableCell isFixed>
+        <div>
+          <h1>{symbol}</h1>
+          <div className="container" style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+            <StyledTableContainer>
+              <StyledTableHeader>Start Date</StyledTableHeader>
+              <StyledTableData>
+                {new Date(`${transactTime}`).toLocaleDateString('en-us', { month: 'long', year: 'numeric' }) || '---'}
+              </StyledTableData>
+            </StyledTableContainer>
+            <StyledTableContainer>
+              <StyledTableHeader>Trades</StyledTableHeader>
+              <StyledTableData>4/32</StyledTableData>
+            </StyledTableContainer>
+
+            <StyledTableContainer>
+              <StyledTableHeader>Status</StyledTableHeader>
+              <Badge colorScheme={status === 'PARTIALLY_FILLED' ? 'orange' : 'green'}>
+                <StyledTableData>{status}</StyledTableData>
+              </Badge>
+            </StyledTableContainer>
+          </div>
+        </div>
+      </TableCell>
       <TableCell>{executedQty}</TableCell>
       <TableCell>{price}</TableCell>
       <TableCell>${Number(cummulativeQuoteQty).toFixed(2)}</TableCell>
       <TableCell>{orderId}</TableCell>
-
       <TableCell>{orderId}</TableCell>
       <TableCell>{new Date(`${transactTime}`).toLocaleString('en-GB') || '---'}</TableCell>
       <TableCell>
