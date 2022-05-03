@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import TableCell from '../TableCell';
 import { Order as OrderType } from 'types';
 import styled from 'styled-components';
+import DayIcon from '../dayIcon';
 
 type OrderCardProps = {
   children: React.ReactNode;
@@ -44,6 +45,7 @@ export default function Order({
   status,
   symbol,
   transactTime,
+  tradesTaken,
 }: Props) {
   const [price, setPrice] = useState(0);
 
@@ -84,6 +86,7 @@ export default function Order({
           <OrderCard isVertical title="status">
             <Badge colorScheme={status === 'PARTIALLY_FILLED' ? 'orange' : 'green'}>{status}</Badge>
           </OrderCard>
+          <OrderCard title="ordersTaken">{tradesTaken}</OrderCard>
         </Stack>
       </Stack>
     );
@@ -93,7 +96,7 @@ export default function Order({
     color: #666;
     font-size: 0.8em;
   `;
-  const StyledTableData = styled.p`
+  const StyledTableData = styled.div`
     color: #666;
     font-size: 1em;
     font-weight: 700;
@@ -103,6 +106,21 @@ export default function Order({
     justify-content: space-between;
     margin: 15px;
   `;
+
+  const DayList = styled.ul`
+    display: flex;
+    justify-content: space-evenly;
+    margin: 15px;
+    list-style: none;
+    > DayIcon {
+      background: yellow;
+      color: white;
+    }
+  `;
+  // > li{
+  //  background: ${props => props.hasPurchased ? "red" : "white"};
+  //  color: ${props => props.hasPurchased ? "white" : "red"};
+  //}
 
   return (
     <Tr>
@@ -135,9 +153,38 @@ export default function Order({
       <TableCell>${Number(cummulativeQuoteQty).toFixed(2)}</TableCell>
       <TableCell>{orderId}</TableCell>
       <TableCell>{orderId}</TableCell>
-      <TableCell>{new Date(`${transactTime}`).toLocaleString('en-GB') || '---'}</TableCell>
+      <TableCell>
+        {new Date(`${transactTime}`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) ||
+          '---'}
+      </TableCell>
       <TableCell>
         <Badge colorScheme={status === 'PARTIALLY_FILLED' ? 'orange' : 'green'}>{status}</Badge>
+      </TableCell>
+      <TableCell>
+        {tradesTaken}
+        <TableCell isFixed>
+          <div>
+            <div className="container" style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+              <StyledTableContainer>
+                <StyledTableHeader>Current Trades</StyledTableHeader>
+                <StyledTableData>
+                  {new Date(`${transactTime}`).toLocaleDateString('en-us', { month: 'long', year: 'numeric' }) || '---'}
+                </StyledTableData>
+                <StyledTableData>
+                  <DayList>
+                    <DayIcon hasPurchased={true} day={'M'} />
+                    <DayIcon hasPurchased={false} day={'T'} />
+                    <DayIcon day={'W'} />
+                    <DayIcon day={'T'} />
+                    <DayIcon day={'F'} />
+                    <DayIcon day={'S'} />
+                    <DayIcon day={'S'} />
+                  </DayList>
+                </StyledTableData>
+              </StyledTableContainer>
+            </div>
+          </div>
+        </TableCell>
       </TableCell>
     </Tr>
   );

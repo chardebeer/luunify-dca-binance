@@ -34,6 +34,7 @@ export type Order = {
   status: 'FILLED' | 'PARTIALLY_FILLED';
   symbol: string;
   transactTime: string;
+  tradesTaken: number;
 };
 
 export type User = {

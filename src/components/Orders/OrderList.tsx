@@ -24,6 +24,7 @@ export default function OrderList({ orders }: Props) {
       status={order.status}
       symbol={order.symbol}
       transactTime={order.transactTime}
+      tradesTaken={order.tradesTaken}
     />
   ));
 
@@ -63,6 +64,7 @@ export default function OrderList({ orders }: Props) {
                   <TableCell isHeading>ID</TableCell>
                   <TableCell isHeading>Exec Time</TableCell>
                   <TableCell isHeading>Status</TableCell>
+                  <TableCell isHeading>Trades Taken</TableCell>
                 </Tr>
               </Thead>
               <Tbody>{ordersArray}</Tbody>
