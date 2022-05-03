@@ -15,6 +15,7 @@ import {
 import React from 'react';
 import { BsThreeDots } from 'react-icons/bs';
 import TableCell from '../TableCell';
+import TradeSettingsModal from '../TradeSettingsModal';
 
 const HistoryIcon = createIcon({
   displayName: 'HistoryIcon',

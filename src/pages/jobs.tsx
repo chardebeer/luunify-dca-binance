@@ -7,6 +7,7 @@ import JobListLoadingState from '../components/Jobs/JobListLoadingState';
 import PageWrapper from 'src/components/PageWrapper';
 import { getSession } from 'next-auth/react';
 import { NextPageContext } from 'next';
+import TradeSettingsModal from 'src/components/TradeSettingsModal';
 
 const JobListEmptyState = dynamic(() => import('../components/Jobs/JobListEmptyState'), {
   loading: ({ error }) => {
@@ -145,6 +146,7 @@ export default function Jobs({ user }: Props) {
       <Center height="100vh" width="100%">
         {renderContent()}
       </Center>
+      <TradeSettingsModal />
     </PageWrapper>
   );
 }

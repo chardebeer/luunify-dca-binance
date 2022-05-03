@@ -4,6 +4,7 @@ import TableCell from '../TableCell';
 import { Order as OrderType } from 'types';
 import styled from 'styled-components';
 import DayIcon from '../dayIcon';
+import { redirect } from 'next/dist/server/api-utils';
 
 type OrderCardProps = {
   children: React.ReactNode;
@@ -107,14 +108,20 @@ export default function Order({
     margin: 15px;
   `;
 
-  const DayList = styled.ul`
+  const DayContainer = styled.div`
     display: flex;
     justify-content: space-evenly;
     margin: 15px;
     list-style: none;
-    > DayIcon {
-      background: yellow;
+    .day {
       color: white;
+      height: 30px;
+      width: 30px;
+      align-text: center;
+      display: flex;
+      justify-content: space-evenly;
+      margin: 5px;
+      padding-top: 3px;
     }
   `;
   // > li{
@@ -148,6 +155,7 @@ export default function Order({
           </div>
         </div>
       </TableCell>
+      <TableCell>Auto</TableCell>
       <TableCell>{executedQty}</TableCell>
       <TableCell>{price}</TableCell>
       <TableCell>${Number(cummulativeQuoteQty).toFixed(2)}</TableCell>
@@ -171,15 +179,15 @@ export default function Order({
                   {new Date(`${transactTime}`).toLocaleDateString('en-us', { month: 'long', year: 'numeric' }) || '---'}
                 </StyledTableData>
                 <StyledTableData>
-                  <DayList>
-                    <DayIcon hasPurchased={true} day={'M'} />
-                    <DayIcon hasPurchased={false} day={'T'} />
-                    <DayIcon day={'W'} />
-                    <DayIcon day={'T'} />
-                    <DayIcon day={'F'} />
-                    <DayIcon day={'S'} />
-                    <DayIcon day={'S'} />
-                  </DayList>
+                  <DayContainer>
+                    <DayIcon className="day" hasPurchased={false} day={'M'} />
+                    <DayIcon className="day" hasPurchased day={'T'} />
+                    <DayIcon className="day" day={'W'} />
+                    <DayIcon className="day" day={'T'} />
+                    <DayIcon className="day" day={'F'} />
+                    <DayIcon className="day" day={'S'} />
+                    <DayIcon className="day" day={'S'} />
+                  </DayContainer>
                 </StyledTableData>
               </StyledTableContainer>
             </div>

@@ -5,23 +5,30 @@ type Props = {
   day?: string;
   className?: string;
   hasPurchased?: boolean;
-  style?: React.CSSProperties;
 };
 
-const StyledDayIcon = styled.li`
-  border-radius: 10px;
-  display: flex;
-  width: 10px;
-  height: 15px;
-  margin: 15px;
+interface Div {
+  hasPurchased: boolean;
+}
+
+const StyledDayIcon = styled.div<Div>`
   color: white;
-  background: ${(props) => (props.hasPurchased ? 'red' : 'white')};
-  color: ${(props) => (props.hasPurchased ? 'white' : 'red')};
+  height: 30px;
+  width: 30px;
+  align-text: center;
+  display: flex;
+  justify-content: space-evenly;
+  margin: 5px;
+  padding-top: 3px;
+  background-color: ${(props) => (props.hasPurchased ? 'red' : 'white')};
 `;
 
-function DayIcon({ className, day, hasPurchased, style }: Props) {
+//  background: ${(props) => (props.hasPurchased ? 'red' : 'white')};
+//color: ${(props) => (props.hasPurchased ? 'white' : 'red')};
+
+function DayIcon({ className, day }: Props) {
   return (
-    <StyledDayIcon style={style} className={className}>
+    <StyledDayIcon hasPurchased className={className}>
       {day}
     </StyledDayIcon>
   );

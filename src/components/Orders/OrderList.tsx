@@ -57,6 +57,7 @@ export default function OrderList({ orders }: Props) {
                   <TableCell isFixed isHeading>
                     Symbol
                   </TableCell>
+                  <TableCell isHeading>Type</TableCell>
                   <TableCell isHeading>Quantity</TableCell>
                   <TableCell isHeading>AVG Price</TableCell>
                   <TableCell isHeading>USD Value</TableCell>

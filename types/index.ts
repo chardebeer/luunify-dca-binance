@@ -35,6 +35,7 @@ export type Order = {
   symbol: string;
   transactTime: string;
   tradesTaken: number;
+  tradeType: string;
 };
 
 export type User = {
