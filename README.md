@@ -22,12 +22,12 @@ What is dollar cost averaging? [Dollar cost averaging DCA](https://academy.binan
 2. Clone the repo
 
    ```sh
-   git clone https://github.com/MlkMahmud/binance-dca-bot.git
+   git clone https://github.com/chardebeer/luunify-dca-binance.git
    ```
 
 3. Install dependencies
    ```sh
-   cd binance-dca-bot
+   cd luunify-dca-binance
    npm install
    ```
 
